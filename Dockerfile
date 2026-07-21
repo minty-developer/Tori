@@ -11,8 +11,8 @@ COPY . .
 WORKDIR "/src/Bot"
 RUN dotnet publish -c Release -o /app/publish
 
-# 2단계: 실행 환경 (.NET 10 런타임 사용 - 버전이 정확히 일치해야 함)
-FROM mcr.microsoft.com/dotnet/runtime:10.0 AS runtime
+# 2단계: 실행 환경 (ASP.NET 10 런타임 사용 - 웹/앱 공통 프레임워크 포함)
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
 
