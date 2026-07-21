@@ -849,12 +849,41 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
         ("작곡 (전설의 마스터)", "전설", 3000)
     };
 
-    [SlashCommand("낚시", "강가나 스튜디오에서 보카로/음성 합성 캐릭터를 스카우트(낚기)하고 도감을 채워봐!")]
+    [SlashCommand("낚시", "100포인트를 미끼(?)로 보컬로이드 얻기!\n(워.....월척이닷~!)")]
     public async Task FishingAsync()
     {
+
+        if (Context.Interaction.HasResponded) return;
         try
         {
             long userId = (long)Context.User.Id;
+            bool isCanBuy = false;
+            using (var db = _dbService.GetConnection())
+            {
+                db.Open();
+
+                string checkQuery = "SELECT Points FROM Users WHERE UserId = @UserId";
+                using var checkCmd = new SqliteCommand(checkQuery, db);
+                checkCmd.Parameters.AddWithValue("@UserId", userId);
+
+                var existingCount = checkCmd.ExecuteScalar();
+
+                if (existingCount != null && existingCount != DBNull.Value)
+                {
+                    string pointQuery = "UPDATE Users SET Points = Points + @Price WHERE UserId = @UserId";
+                    using var pointCmd = new SqliteCommand(pointQuery, db);
+                    pointCmd.Parameters.AddWithValue("@Price", -100);
+                    pointCmd.Parameters.AddWithValue("@UserId", userId);
+                    pointCmd.ExecuteNonQuery();
+                    isCanBuy = true;
+                }
+                else
+                {
+                    await RespondAsync("돈이 부족하다구!");
+                }
+            }
+
+            if(!isCanBuy) return;
 
             // 등급 확률: 일반 60%, 희귀 30%, 전설 10%
             int roll = Random.Shared.Next(1, 101);
