@@ -44,4 +44,7 @@ var app = builder.Build();
 
 app.MapGet("/", () => "토리 여기 있다구!");
 
-app.Run();
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+
+Console.WriteLine("토리가 돌아왔따~!!");
+app.Run($"http://0.0.0.0:{port}");
