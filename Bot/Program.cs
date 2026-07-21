@@ -7,6 +7,12 @@ var builder = WebApplication.CreateBuilder(new WebApplicationOptions
     Args = args
 });
 
+builder.Configuration.Sources.Clear();
+builder.Configuration
+    .SetBasePath(AppContext.BaseDirectory)
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+    .AddEnvironmentVariables();
+
 // Discord.Net 소켓 클라이언트 설정 (게이트웨이 인텐트: 비특권 전체 + 메시지 본문 읽기 권한)
 builder.Services.AddSingleton(x => new DiscordSocketConfig
 {
