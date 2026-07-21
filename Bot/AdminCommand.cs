@@ -79,6 +79,7 @@ public class AdminCommands : InteractionModuleBase<SocketInteractionContext>
     {
         try
         {
+            await DeferAsync(ephemeral: true);
             // 🔧 버그 수정: 존재하지 않는 타입인 SocketModalInteraction 대신
             //    Discord.Net에서 모달 제출 인터랙션을 나타내는 실제 타입인 SocketModal을 사용해야 한다.
             string customId = "";
@@ -144,7 +145,7 @@ public class AdminCommands : InteractionModuleBase<SocketInteractionContext>
         catch (Exception ex)
         {
             // 💡 발생 상황: 모달 입력 글자수가 너무 길거나, 봇이 지정된 채널에 메시지 권한이 없을 때
-            await RespondErrorAsync("공지 전송", ex);
+            await FollowupAsync("공지 전송" + ex);
         }
     }
 
