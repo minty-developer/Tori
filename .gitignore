@@ -1,0 +1,7 @@
+[Bb]in/
+[Oo]bj/
+.vscode/
+*.db
+*.sqlite
+appsettings.json
+appsettings.Development.json
