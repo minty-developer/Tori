@@ -1,11 +1,17 @@
 using Discord;
 using Discord.WebSocket;
 using Discord.Interactions;
+using System.Reflection.Metadata.Ecma335;
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
     Args = args
 });
+
+bool isDev = false;
+
+if(isDev) Env.Load();
 
 builder.Configuration.Sources.Clear();
 builder.Configuration
@@ -33,6 +39,9 @@ builder.Services.AddSingleton(provider =>
     new InteractionService(provider.GetRequiredService<DiscordSocketClient>())
 );
 
+// 컨트롤러 등록
+builder.Services.AddControllers();
+
 // 일본어 메시지 자동 번역 서비스. DiscordBotService 생성자에서 함께 주입받아
 // DI 컨테이너가 이 인스턴스를 계속 살려두도록(=이벤트 구독이 유지되도록) 한다.
 builder.Services.AddSingleton<TranslationService>();
@@ -42,9 +51,15 @@ builder.Services.AddHostedService<DiscordBotService>();
 
 var app = builder.Build();
 
-app.MapGet("/", () => "토리 여기 있다구!");
+app.MapControllers();
+
+// HTML 파일을 보낼 수 있게 설정
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
+app.MapGet("/favicon.ico", () => Results.StatusCode(204));
 
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 
 Console.WriteLine("토리가 돌아왔따~!!");
-app.Run($"http://0.0.0.0:{port}");
+app.Run(isDev? $"http://localhost:{port}": $"http://0.0.0.0:{port}");

@@ -13,15 +13,16 @@ public class AnnounceModal : IModal
 
     [InputLabel("공지 제목")]
     [ModalTextInput("announce_title", TextInputStyle.Short, placeholder: "예: 업데이트 안내(v1.0.0)", maxLength: 100)]
-    public string TitleInput { get; set; }
+    public string TitleInput { get; set; } = string.Empty;
 
     [InputLabel("1. 주요 내용 (엔터 가능)")]
-    [ModalTextInput("announce_main", TextInputStyle.Paragraph, placeholder: "주요 내용을 자유롭게 적어줘!", maxLength: 1000)]
-    public string MainContent { get; set; }
+    [ModalTextInput("announce_main", TextInputStyle.Paragraph, placeholder: "주요 내용을 자유롭게 적어줘!", maxLength: 800)]
+    public string MainContent { get; set; } = string.Empty;
 
-    [InputLabel("2. 세부 내용 (엔터 가능)")]
-    [ModalTextInput("announce_detail", TextInputStyle.Paragraph, placeholder: "세부 내용을 자유롭게 적어줘!", maxLength: 1000)]
-    public string DetailContent { get; set; }
+    [InputLabel("2. 세부 내용 (선택 사항)")]
+    [RequiredInput(false)] 
+    [ModalTextInput("announce_detail", TextInputStyle.Paragraph, placeholder: "세부 내용을 적거나 비워둬도 돼!", maxLength: 800)]
+    public string DetailContent { get; set; } = string.Empty;
 }
 
 // 서버 관리자 전용 명령어 모음 (공지, 역할관리, 돈관리, 투표)
@@ -75,77 +76,76 @@ public class AdminCommands : InteractionModuleBase<SocketInteractionContext>
 
     // 유저가 모달에서 '제출'을 누르면 실행되는 메서드
     [ModalInteraction("announce_modal_*")]
-    public async Task HandleAnnounceModal(AnnounceModal modal)
+    public async Task HandleAnnounceModal(string channelIdStr, AnnounceModal modal)
     {
         try
         {
             await DeferAsync(ephemeral: true);
-            // 🔧 버그 수정: 존재하지 않는 타입인 SocketModalInteraction 대신
-            //    Discord.Net에서 모달 제출 인터랙션을 나타내는 실제 타입인 SocketModal을 사용해야 한다.
-            string customId = "";
-            if (Context.Interaction is SocketModal modalInteraction)
-            {
-                customId = modalInteraction.Data.CustomId;
-            }
 
-            string channelIdStr = customId.Replace("announce_modal_", "");
+            string customId = (Context.Interaction as SocketModal)?.Data.CustomId ?? "";
 
             if (!ulong.TryParse(channelIdStr, out ulong channelId))
             {
-                _logger.LogWarning("공지 모달 CustomId에서 채널 ID 파싱 실패: {CustomId}", customId);
-                await RespondAsync("채널 정보를 찾지 못했어!", ephemeral: true);
+                await FollowupAsync("채널 정보를 찾지 못했어!", ephemeral: true);
                 return;
             }
 
-            var channel = Context.Guild.GetTextChannel(channelId);
+            var channel = Context.Guild?.GetTextChannel(channelId);
             if (channel == null)
             {
-                _logger.LogWarning("공지 대상 채널을 찾을 수 없음: ChannelId={ChannelId}", channelId);
-                await RespondAsync("공지를 보낼 채널을 찾을 수 없어!", ephemeral: true);
+                await FollowupAsync("공지를 보낼 채널을 찾을 수 없어!", ephemeral: true);
                 return;
             }
-
-            await DeferAsync(ephemeral: true);
 
             string today = DateTime.UtcNow.AddHours(9).ToString("yyyy년 MM월 dd일 (ddd)");
 
+            string mainContent = string.IsNullOrWhiteSpace(modal.MainContent) ? "내용 없음" : modal.MainContent;
+            string detailContent = string.IsNullOrWhiteSpace(modal.DetailContent) ? "없음" : modal.DetailContent;
+
             string formattedMessage = $@"공지대상: @everyone 
 
-━━━━━━━ 💿 **[서버 공지사항]** 💿 ━━━━━━━
+    ━━━━━━━ 💿 **[서버 공지사항]** 💿 ━━━━━━━
 
-안녕하세요, **보카로** 관리진입니다!
-서버원 분들이 즐겁고 쾌적하게 즐길 수 있도록 몇 가지 안내를 전달드립니다.
+    안녕하세요, **보카로** 관리진입니다!
+    서버원 분들이 즐겁고 쾌적하게 즐길 수 있도록 몇 가지 안내를 전달드립니다.
 
-### 📢 [공지 제목: {modal.TitleInput}]
+    ### 📢 [공지 제목: {modal.TitleInput}]
 
-**1. 주요 내용**
-{modal.MainContent}
+    **1. 주요 내용**
+    {mainContent}
 
-**2. 세부 내용**
-{modal.DetailContent}
+    **2. 세부 내용**
+    {detailContent}
 
-**3. 변경 및 적용 일시**
-* **일시:** 공지시({today})부터 즉시 적용
+    **3. 변경 및 적용 일시**
+    * **일시:** 공지시({today})부터 즉시 적용
 
-**4. 관리진 한마디**
-> 💬 ""언제나 보컬로이드들을 사랑해 주시는 서버원분들께 감사드립니다. 서로 존중하며 즐거운 덕질 공간을 만들어 가요!""
+    **4. 관리진 한마디**
+    > 💬 ""언제나 보컬로이드들을 사랑해 주시는 서버원분들께 감사드립니다. 서로 존중하며 즐거운 덕질 공간을 만들어 가요!""
 
-💡 **문의 사항이 있다면?**
-궁금한 점이나 건의사항은 #문의-및-건의 채널 혹은 @관리자 에게 DM을 보내주세요.
+    💡 **문의 사항이 있다면?**
+    궁금한 점이나 건의사항은 #문의-및-건의 채널 혹은 @관리자 에게 DM을 보내주세요.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-쓴 이: {Context.User.Mention}  |  전송: 🤖 토리 봇  |  수정 상태: ❌";
+    쓴 이: {Context.User.Mention}  |  전송: 🤖 토리 봇  |  수정 상태: ❌";
+
+            if (formattedMessage.Length > 2000)
+            {
+                formattedMessage = formattedMessage.Substring(0, 1990) + "\n...(후략)";
+            }
 
             await channel.SendMessageAsync(formattedMessage);
-            await FollowupAsync($"✅ {channel.Mention} 채널에 공식 템플릿으로 공지를 전송했어!", ephemeral: true);
+            
+            // 💡 이미 Defer 되었으므로 RespondAsync가 아닌 FollowupAsync를 사용합니다.
+            await FollowupAsync($"✅ {channel.Mention} 채널에 공지를 전송했어!", ephemeral: true);
 
             _logger.LogInformation("{User}님이 {Channel} 채널에 공지를 전송했습니다. 제목: {Title}", Context.User.Username, channel.Name, modal.TitleInput);
         }
         catch (Exception ex)
         {
-            // 💡 발생 상황: 모달 입력 글자수가 너무 길거나, 봇이 지정된 채널에 메시지 권한이 없을 때
-            await FollowupAsync("공지 전송" + ex);
+            _logger.LogError(ex, "공지 모달 제출 처리 중 오류 발생");
+            await FollowupAsync($"공지 전송 중 오류가 발생했어!\n`{ex.Message}`", ephemeral: true);
         }
     }
 

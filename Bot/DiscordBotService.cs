@@ -48,7 +48,7 @@ public class DiscordBotService : IHostedService
         // 2. "온라인 상태" 색상 표시 (Online, Idle, DoNotDisturb, Invisible 등)
         await _client.SetStatusAsync(UserStatus.Online);
 
-        var token = Environment.GetEnvironmentVariable("DISCORD_TOKEN");
+    var token = Environment.GetEnvironmentVariable("DISCORD_TOKEN");
         if (string.IsNullOrEmpty(token))
         {
             _logger.LogCritical("DiscordToken이 설정되지 않았습니다! 환경 변수 또는 설정 파일을 확인해주세요.");
@@ -65,7 +65,9 @@ public class DiscordBotService : IHostedService
 
     public async Task StopAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("봇을 종료합니다...");
+        _logger.LogInformation("봇을 종료합니다...")
+        ;await _client.SetStatusAsync(UserStatus.Offline);
+        await _client.SetActivityAsync(new Game("꼭 돌아올게!"));
         await _client.StopAsync();
     }
 

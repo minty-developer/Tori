@@ -1,0 +1,111 @@
+/* ========== Default Set ========== */
+:root {
+    /* Colors */
+    --HeaderBackgroundColor: #ff0033;
+    --HeaderTextColor: #fff;
+    --MainBackgroundColor: #fff;
+    --MainTextColor: #200;
+    --cardBackgroundColor: #aaa;
+    --cardTextColor: #333;
+    --FooterBackgroundColor: #fff;
+    --FooterTextColor: #000;
+    --aTextColor: #333;
+    /* Sizes */
+    --HeaderHeight: 200px;
+    --MainHeight: calc(100% - 320px);
+    --cardHeight: 125px;
+    --faqHeight: 100px;
+    --FooterHeight: 200px;
+    --divLineColumnMargin: 5px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+.div-line {
+    width: 90%;
+    margin-top: var(--divLineColumnMargin);
+    margin-bottom: var(--divLineColumnMargin);
+    margin-left: 5%;
+}
+
+a {
+    color: var(--aTextColor);
+}
+
+/* ========== Header ========== */
+header {
+    width: 100%;
+    height: var(--HeaderHeight);
+    background-color: var(--HeaderBackgroundColor);
+    display: flex;
+    align-items: end;
+    padding: 10px;
+    gap: 10px;
+    color: white;
+}
+
+.profile {
+    width: 100px;
+    height: 100px;
+    border-radius: 50px;
+}
+
+header div {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ========== Main ========== */
+main {
+    width: 100%;
+    height: var(--MainHeight);
+    background-color: var(--MainBackgroundColor);
+}
+
+.main-title {
+    margin-left: 40px;
+}
+
+.cards {
+    width: 100%;
+    height: calc(var(--cardHeight) + 20px);
+    display: flex;
+    padding-left: 5%;
+    padding-right: 5%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    gap: 5%;
+}
+
+.card {
+    width: 42.5%;
+    height: var(--cardHeight);
+    background-color: var(--cardBackgroundColor);
+    padding: 5px;
+    color: var(--cardTextColor);
+}
+
+.faq {
+    width: calc(100% - 40px);
+    height: var(--faqHeight);
+    margin-left: 40px;
+}
+
+/* ========== Footer ========== */
+footer {
+    width: 100%;
+    height: var(--FooterHeight);
+    background-color: var(--FooterBackgroundColor);
+    color: var(--FooterTextColor);
+    padding: 40px;
+}

@@ -969,7 +969,7 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
     public async Task FriendAsync(
         [Summary(description: "도박 종류를 선택해줘")] 
         [Choice("인사하기", "인사")] 
-        [Choice("확률 룰렛 (하이리스크)", "룰렛")] 
+        [Choice("쓰담쓰담", "쓰다듬기")] 
         string Action)
     {
         try
@@ -980,10 +980,11 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
                     await RespondAsync("안녕~!");
                     break;
 
+                case "쓰다듬기":
+                    await RespondAsync("아..앗 뭐하는 거야! 머리 헝클어지잖아...");
+                    break;
+
                 default:
-                    // 🔧 버그 수정: "룰렛" 선택지를 처리하는 case가 없어서, 유저가 이 옵션을 고르면
-                    //    아무 응답도 안 가고 디스코드에 "상호작용 실패"로 표시되고 있었다.
-                    //    아직 구현되지 않은 기능이므로 최소한 사용자에게 안내는 해준다.
                     await RespondAsync("앗, 그 기능은 아직 준비 중이야! 조금만 기다려줘~", ephemeral: true);
                     break;
             }
@@ -991,6 +992,58 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
         catch (Exception ex)
         {
             await RespondErrorAsync("친해지기", ex, "토리가 아직 말을 못 들었습니다!\n*인터넷 연결이 끊겼거나 디스코드 서버에 문제가 있습니다!*\n*점검:*\n- 인터넷 연결\n- 관리자 DM");
+        }
+    }
+    [SlashCommand("초대링크", "현재 채널의 서버 초대 링크를 생성합니다.")]
+    public async Task CreateInviteLinkAsync(
+        [Summary(description: "링크 만료 시간 (분 단위, 0 = 무제한)")] int maxAgeMinutes = 1440, // 기본값: 24시간 (1440분)
+        [Summary(description: "최대 사용 횟수 (0 = 무제한)")] int maxUses = 0)
+    {
+        try
+        {
+            await DeferAsync(ephemeral: true); // 생성한 링크가 다른 사람에게 노출되지 않게 비공개 응답
+
+            if (Context.Channel is not ITextChannel channel)
+            {
+                await FollowupAsync("텍스트 채널에서만 초대 링크를 만들 수 있어!", ephemeral: true);
+                return;
+            }
+
+            // 분 단위를 초 단위로 변환 (0이면 null로 처리되어 무제한)
+            int? maxAgeSeconds = maxAgeMinutes > 0 ? maxAgeMinutes * 60 : null;
+            int? uses = maxUses > 0 ? maxUses : null;
+
+            // 디스코드 API로 초대 링크 생성
+            var invite = await channel.CreateInviteAsync(
+                maxAge: maxAgeSeconds,
+                maxUses: uses,
+                isTemporary: false,
+                isUnique: true
+            );
+
+            await FollowupAsync($"짜잔! 초대 링크가 생성되었어!\n친구 많이 많이 데리고 오라구~!\n🔗 {invite.Url}", ephemeral: true);
+
+            _logger.LogInformation("{User}님이 #{Channel} 채널의 초대 링크를 생성했습니다: {Url}", 
+                Context.User.Username, channel.Name, invite.Url);
+        }
+        catch (Discord.Net.HttpException httpEx) when (httpEx.HttpCode == System.Net.HttpStatusCode.Forbidden)
+        {
+            await FollowupAsync("토리가 이 채널에서 **'초대 코드 만들기'** 권한이 없어!", ephemeral: true);
+        }
+        catch (Exception ex)
+        {
+            await RespondErrorAsync("초대링크", ex, "초대 링크를 생성하는 도중 오류가 발생했어!");
+        }
+    }
+    [SlashCommand("웹사이트", "토리의 웹사이트")]
+    public async Task ShowWebSiteUrlAsync()
+    {
+        try
+        {
+            await RespondAsync("내 웹사이트는 여기있어! https://tori-9gxd.onrender.com");
+        } catch (Exception ex)
+        {
+            await RespondErrorAsync("웹사이트", ex, "웹사이트 링크를 보내는 중에 오류가 났습니다!");
         }
     }
 }

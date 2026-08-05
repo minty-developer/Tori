@@ -10,9 +10,6 @@ public class BirthdayBackgroundService : BackgroundService
 {
     private readonly DiscordSocketClient _client;
     private readonly ILogger<BirthdayBackgroundService> _logger;
-
-    // 🔧 버그 수정: 실제 데이터 파일명은 "Birthday.json"인데 코드에서는 "birthdays.json"을 찾고 있어서
-    //    파일을 절대 못 찾고(File.Exists == false) 매일 조용히 아무 것도 안 하고 있었다.
     private const string BirthdayDataPath = "Birthday.json";
 
     // 알림을 띄울 디스코드 채널 ID (여기에 공지를 보낼 채널 ID 숫자를 넣으세요!)
@@ -73,12 +70,6 @@ public class BirthdayBackgroundService : BackgroundService
             if (todayStars.Count == 0)
             {
                 _logger.LogInformation("오늘({Date})은 생일인 캐릭터가 없습니다.", targetDate.ToString("MM-dd"));
-                return;
-            }
-
-            if (TargetChannelId == 0)
-            {
-                _logger.LogWarning("TargetChannelId가 설정되지 않아 생일 알림을 보낼 수 없습니다.");
                 return;
             }
 
