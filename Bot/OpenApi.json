@@ -1,0 +1,62 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Tori Discord Bot API",
+    "description": "보컬로이드 서버 운영용 디스코드 봇 '토리(Tori)'의 REST API 명세서입니다.",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "OpenApi 문서 확인",
+        "responses": {
+          "200": {
+            "description": "문서 반환 완료"
+          },
+          "404": {
+            "description": "OpenApi 문서를 찾을 수 없음"
+          }
+        }
+      }
+    },
+    "/version": {
+      "get": {
+        "summary": "현재 봇의 버전 확인",
+        "responses": {
+          "200": {
+            "description": "봇의 버전 반환 완료"
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "서버 상태 확인",
+        "responses": {
+          "200": {
+            "description": "서버 정상 동작 중"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    }
+  }
+}

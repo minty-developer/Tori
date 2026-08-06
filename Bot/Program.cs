@@ -9,10 +9,7 @@ var builder = WebApplication.CreateBuilder(new WebApplicationOptions
     Args = args
 });
 
-bool isDev = false;
-
-if(isDev) Env.Load();
-
+BotEnv.CheckEnv();
 builder.Configuration.Sources.Clear();
 builder.Configuration
     .SetBasePath(AppContext.BaseDirectory)
@@ -39,6 +36,8 @@ builder.Services.AddSingleton(provider =>
     new InteractionService(provider.GetRequiredService<DiscordSocketClient>())
 );
 
+// 메모리 캐시 사용 등록
+builder.Services.AddMemoryCache();
 // 컨트롤러 등록
 builder.Services.AddControllers();
 
@@ -51,6 +50,37 @@ builder.Services.AddHostedService<DiscordBotService>();
 
 var app = builder.Build();
 
+app.UseRateLimiterMiddleware();
+
+// API Key 검증 미들웨어
+app.Use(async (context, next) =>
+{
+    // /api 로 시작하는 요청에 대해서만 API 키 검증
+    if (context.Request.Path.StartsWithSegments("/api"))
+    {
+        // 1. Header에서 x-api-key 추출
+        if (!context.Request.Headers.TryGetValue("x-api-key", out var extractedApiKey))
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            await context.Response.WriteAsJsonAsync(new { success = false, message = "API 키가 누락되었습니다." });
+            return;
+        }
+
+        var validApiKey = Environment.GetEnvironmentVariable("TORI_API_KEY");
+
+        // 3. 키 일치 여부 검증
+        if (string.IsNullOrEmpty(validApiKey) || !validApiKey.Equals(extractedApiKey))
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            await context.Response.WriteAsJsonAsync(new { success = false, message = "유효하지 않은 API 키입니다." });
+            return;
+        }
+    }
+
+    // 검증 성공 시 다음 라우트/컨트롤러로 진행
+    await next();
+});
+
 app.MapControllers();
 
 // HTML 파일을 보낼 수 있게 설정
@@ -61,5 +91,14 @@ app.MapGet("/favicon.ico", () => Results.StatusCode(204));
 
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 
-Console.WriteLine("토리가 돌아왔따~!!");
-app.Run(isDev? $"http://localhost:{port}": $"http://0.0.0.0:{port}");
+app.Run(BotEnv.isDev? $"http://localhost:{port}": $"http://0.0.0.0:{port}");
+
+public static class BotEnv
+{
+    public static bool isDev = true;
+    public static string botVersion = "1.2.0";
+    
+    public static void CheckEnv() {
+        if(isDev) Env.Load();
+    }
+}

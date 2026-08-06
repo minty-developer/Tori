@@ -11,4 +11,9 @@ public class UsersController : ControllerBase
     {
         return PhysicalFile(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "index.html"), "text/html");
     }
+    [HttpGet("/docs")]
+    public IActionResult Docs()
+    {
+        return RedirectPermanent("/api/v1");
+    }
 }

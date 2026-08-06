@@ -33,11 +33,13 @@ public class AdminCommands : InteractionModuleBase<SocketInteractionContext>
 
     private readonly DatabaseService _dbService;
     private readonly ILogger<AdminCommands> _logger;
+    private readonly InteractionService _interactionService;
 
-    public AdminCommands(DatabaseService dbService, ILogger<AdminCommands> logger)
+    public AdminCommands(DatabaseService dbService, ILogger<AdminCommands> logger, InteractionService interactionService)
     {
         _dbService = dbService;
         _logger = logger;
+        _interactionService = interactionService;
     }
 
     /// <summary>
@@ -54,24 +56,6 @@ public class AdminCommands : InteractionModuleBase<SocketInteractionContext>
             await FollowupAsync(userMessage, ephemeral: true);
         else
             await RespondAsync(userMessage, ephemeral: true);
-    }
-
-    [SlashCommand("공지", "모달 팝업 창을 띄워 편하게 서버 공지를 작성합니다.")]
-    public async Task AnnounceModalCommand(
-        [Summary(description: "공지를 보낼 채널")] ITextChannel channel)
-    {
-        try
-        {
-            _logger.LogInformation("{User}님이 '공지' 명령어로 {Channel} 채널에 공지 모달을 요청했습니다.", Context.User.Username, channel.Name);
-
-            // 커스텀 ID에 채널 ID를 숨겨서 전달합니다. (모달 제출 시 어느 채널로 보낼지 복원하기 위함)
-            await Context.Interaction.RespondWithModalAsync<AnnounceModal>($"announce_modal_{channel.Id}");
-        }
-        catch (Exception ex)
-        {
-            // 💡 발생 상황: 모달 팝업 창을 띄우는 과정에서 디스코드 통신이 끊겼을 때
-            await RespondErrorAsync("공지 모달", ex);
-        }
     }
 
     // 유저가 모달에서 '제출'을 누르면 실행되는 메서드
@@ -128,7 +112,7 @@ public class AdminCommands : InteractionModuleBase<SocketInteractionContext>
 
     ━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-    쓴 이: {Context.User.Mention}  |  전송: 🤖 토리 봇  |  수정 상태: ❌";
+    쓴 이: {Context.User.Mention}  |  전송: <:not_redmiku:1510473675382460616> 토리 봇  |  수정 상태: ❌";
 
             if (formattedMessage.Length > 2000)
             {
@@ -146,6 +130,46 @@ public class AdminCommands : InteractionModuleBase<SocketInteractionContext>
         {
             _logger.LogError(ex, "공지 모달 제출 처리 중 오류 발생");
             await FollowupAsync($"공지 전송 중 오류가 발생했어!\n`{ex.Message}`", ephemeral: true);
+        }
+    }
+
+    [SlashCommand("명령어등록", "현재 서버에 슬래시 명령어를 수동으로 강제 등록합니다.")]
+    public async Task ManualRegisterAsync()
+    {
+        // 등록 작업이 살짝 걸릴 수 있으므로 응답 대기 상태(Thinking)로 먼저 띄움
+        await DeferAsync(ephemeral: true);
+
+        try
+        {
+            // 1. 현재 서버(Guild)에 즉시 등록 (테스트용으로 가장 추천!)
+            await _interactionService.RegisterCommandsToGuildAsync(Context.Guild.Id);
+
+            // 2. 만약 봇이 들어간 모든 곳(전역)에 등록하고 싶다면 아래 코드를 사용 (반영까지 최대 1시간 소요)
+            // await _interactionService.RegisterCommandsGloballyAsync();
+
+            await FollowupAsync("✅ 슬래시 명령어가 이 서버에 성공적으로 수동 등록되었습니다!", ephemeral: true);
+        }
+        catch (Exception ex)
+        {
+            await FollowupAsync($"❌ 등록 중 오류가 발생했습니다: `{ex.Message}`", ephemeral: true);
+        }
+    }   
+
+    [SlashCommand("공지", "모달 팝업 창을 띄워 편하게 서버 공지를 작성합니다.")]
+    public async Task AnnounceModalCommand(
+        [Summary(description: "공지를 보낼 채널")] ITextChannel channel)
+    {
+        try
+        {
+            _logger.LogInformation("{User}님이 '공지' 명령어로 {Channel} 채널에 공지 모달을 요청했습니다.", Context.User.Username, channel.Name);
+
+            // 커스텀 ID에 채널 ID를 숨겨서 전달합니다. (모달 제출 시 어느 채널로 보낼지 복원하기 위함)
+            await Context.Interaction.RespondWithModalAsync<AnnounceModal>($"announce_modal_{channel.Id}");
+        }
+        catch (Exception ex)
+        {
+            // 💡 발생 상황: 모달 팝업 창을 띄우는 과정에서 디스코드 통신이 끊겼을 때
+            await RespondErrorAsync("공지 모달", ex);
         }
     }
 

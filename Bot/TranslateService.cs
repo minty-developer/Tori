@@ -4,16 +4,20 @@ using System.Text.RegularExpressions;
 using System.Text.Json;
 
 // 일본어(히라가나/가타카나)가 포함된 메시지를 감지해서 자동으로 한국어 번역을 답글로 달아주는 서비스.
-//
-// 🔧 정리: DiscordBotService.cs에도 완전히 동일한 번역 로직(IsJapanese, TranslateToKoreanAsync,
-//    MessageReceived 구독)이 중복으로 들어 있었다. 두 곳이 동시에 살아있으면 일본어 메시지 하나당
-//    번역 답글이 두 번 달리는 버그가 생기므로, 번역 기능은 이 클래스 하나로 통일했다.
-//    (DiscordBotService는 이 클래스를 생성자에서 주입받아 DI 컨테이너가 살아있게만 유지한다.)
 public class TranslationService
 {
     private readonly DiscordSocketClient _client;
     private readonly ILogger<TranslationService> _logger;
     private readonly HttpClient _httpClient;
+
+    // 번역을 제외할 채널 ID 목록 (공지 채널 등)
+    private readonly HashSet<ulong> _excludedChannelIds = new()
+    {
+        1523983025396912199,
+        1523988207254114385,
+        1491768971035279400,
+        1524006956304568320
+    };
 
     public TranslationService(DiscordSocketClient client, ILogger<TranslationService> logger)
     {
@@ -27,6 +31,9 @@ public class TranslationService
     {
         // 봇이 보낸 메시지거나, 시스템 메시지면 무시
         if (message.Author.IsBot) return;
+
+        // 제외된 채널(공지 채널 등)에서 온 메시지면 무시
+        if (_excludedChannelIds.Contains(message.Channel.Id)) return;
 
         string content = message.Content;
 

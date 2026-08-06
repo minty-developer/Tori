@@ -16,8 +16,6 @@ public class DatabaseService
         var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bot.db");
         _connectionString = $"Data Source={dbPath}";
 
-        _logger.LogInformation("DB 파일 경로: {DbPath}", dbPath);
-
         InitializeDatabase();
     }
 
@@ -59,8 +57,6 @@ public class DatabaseService
 
             using var command = new SqliteCommand(commandText, connection);
             command.ExecuteNonQuery();
-
-            _logger.LogInformation("DB 초기화가 완료되었습니다. (Users, UserFishes 테이블 준비됨)");
         }
         catch (Exception ex)
         {

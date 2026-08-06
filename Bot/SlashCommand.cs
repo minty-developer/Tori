@@ -12,12 +12,45 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
 {
     private readonly DatabaseService _dbService;
     private readonly ILogger<SlashCommands> _logger;
+    private readonly InteractionService _interactionService;
 
-    public SlashCommands(DatabaseService dbService, ILogger<SlashCommands> logger)
+    public SlashCommands(DatabaseService dbService, ILogger<SlashCommands> logger, InteractionService interactionService)
     {
         _dbService = dbService;
         _logger = logger;
+        _interactionService = interactionService;
     }
+
+    // 낚시로 등장 가능한 캐릭터 후보 목록.
+    private static readonly List<(string Name, string Grade, long Price)> FishingCharacterPool = new()
+    {
+        ("즌다몬", "일반", 100),
+        ("카이토", "일반", 100),
+        ("유키", "일반", 120),
+        ("카후", "일반", 120),
+        ("우이", "일반", 150),
+        ("유카", "일반", 150),
+        ("린", "일반", 200),
+        ("렌", "일반", 200),
+        ("네루", "일반", 250),
+        ("레이", "일반", 250),
+
+        ("테토 (한국어)", "희귀", 500),
+        ("미쿠 (한국어)", "희귀", 600),
+        ("테토 (영어)", "희귀", 700),
+        ("미쿠 (영어)", "희귀", 800),
+
+        ("테토 (일본어)", "전설", 1500),
+        ("미쿠 (일본어)", "전설", 2000),
+        ("작곡 (전설의 마스터)", "전설", 3000)
+    };
+
+    // 유저에 행동에 대한 테토의 반응
+    public Dictionary<string, string> ActionofMove = new Dictionary<string, string>() {
+        { "인사", "안녕~!" },
+        { "쓰다듬기", "아..앗 뭐하는 거야! 머리 헝클어지잖아..."},
+        { "바라보기", "뭐....뭘 바라 봐! 내가 그렇게 이뻐?"}
+    };
 
     /// <summary>
     /// 이미 응답했으면 FollowupAsync, 아직이면 RespondAsync로 안전하게 에러 메시지를 보낸다.
@@ -32,6 +65,24 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
             await FollowupAsync(userMessage, ephemeral: true);
         else
             await RespondAsync(userMessage, ephemeral: true);
+    }
+
+    [SlashCommand("명령어", "토리가 할 수 있는 일은~!")]
+    public async Task ListCommandsAsync()
+    {
+        // InteractionService에 등록된 모든 슬래시 명령어 가져오기
+        var slashCommands = _interactionService.SlashCommands;
+
+        var description = string.Join("\n", slashCommands.Select(cmd => $"`/{cmd.Name}` : {cmd.Description}"));
+
+        var embed = new EmbedBuilder()
+            .WithTitle("✨ 토리의 명령어 목록")
+            .WithDescription(string.IsNullOrEmpty(description) ? "등록된 명령어가 없습니다." : description)
+            .WithColor(Color.Parse("FF0033")) // 테토 시그니처 컬러 느낌!
+            .Build();
+
+        // ephemeral: true를 주면 이 명령어를 쓴 사람 눈에만 몰래 보임
+        await RespondAsync(embed: embed, ephemeral: true);
     }
 
     [SlashCommand("토리", "토리가 대답합니다!")]
@@ -825,30 +876,6 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
         }
     }
 
-    // 낚시로 등장 가능한 캐릭터 후보 목록. 명령어를 호출할 때마다 새로 만들 필요가 없으므로 정적 필드로 뺐다.
-    private static readonly List<(string Name, string Grade, long Price)> FishingCharacterPool = new()
-    {
-        ("즌다몬", "일반", 100),
-        ("카이토", "일반", 100),
-        ("유키", "일반", 120),
-        ("카후", "일반", 120),
-        ("우이", "일반", 150),
-        ("유카", "일반", 150),
-        ("린", "일반", 200),
-        ("렌", "일반", 200),
-        ("네루", "일반", 250),
-        ("레이", "일반", 250),
-
-        ("테토 (한국어)", "희귀", 500),
-        ("미쿠 (한국어)", "희귀", 600),
-        ("테토 (영어)", "희귀", 700),
-        ("미쿠 (영어)", "희귀", 800),
-
-        ("테토 (일본어)", "전설", 1500),
-        ("미쿠 (일본어)", "전설", 2000),
-        ("작곡 (전설의 마스터)", "전설", 3000)
-    };
-
     [SlashCommand("낚시", "100포인트를 미끼(?)로 보컬로이드 얻기!\n(워.....월척이닷~!)")]
     public async Task FishingAsync()
     {
@@ -967,33 +994,22 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
 
     [SlashCommand("친해지기", "나...나랑...?!")]
     public async Task FriendAsync(
-        [Summary(description: "도박 종류를 선택해줘")] 
+        [Summary(description: "행동을 선택해줘")] 
         [Choice("인사하기", "인사")] 
-        [Choice("쓰담쓰담", "쓰다듬기")] 
+        [Choice("쓰담쓰담~", "쓰다듬기")] 
         string Action)
     {
         try
         {
-            switch (Action)
-            {
-                case "인사":
-                    await RespondAsync("안녕~!");
-                    break;
-
-                case "쓰다듬기":
-                    await RespondAsync("아..앗 뭐하는 거야! 머리 헝클어지잖아...");
-                    break;
-
-                default:
-                    await RespondAsync("앗, 그 기능은 아직 준비 중이야! 조금만 기다려줘~", ephemeral: true);
-                    break;
-            }
+            if(ActionofMove.TryGetValue(Action, out string? a)) await RespondAsync(a);
+            else await RespondAsync("앗, 그 기능은 아직 준비 중이야! 조금만 기다려줘~", ephemeral: true);
         }
         catch (Exception ex)
         {
             await RespondErrorAsync("친해지기", ex, "토리가 아직 말을 못 들었습니다!\n*인터넷 연결이 끊겼거나 디스코드 서버에 문제가 있습니다!*\n*점검:*\n- 인터넷 연결\n- 관리자 DM");
         }
     }
+
     [SlashCommand("초대링크", "현재 채널의 서버 초대 링크를 생성합니다.")]
     public async Task CreateInviteLinkAsync(
         [Summary(description: "링크 만료 시간 (분 단위, 0 = 무제한)")] int maxAgeMinutes = 1440, // 기본값: 24시간 (1440분)
@@ -1035,6 +1051,7 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
             await RespondErrorAsync("초대링크", ex, "초대 링크를 생성하는 도중 오류가 발생했어!");
         }
     }
+
     [SlashCommand("웹사이트", "토리의 웹사이트")]
     public async Task ShowWebSiteUrlAsync()
     {
@@ -1044,6 +1061,31 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
         } catch (Exception ex)
         {
             await RespondErrorAsync("웹사이트", ex, "웹사이트 링크를 보내는 중에 오류가 났습니다!");
+        }
+    }
+
+    [SlashCommand("비밀키", "Api키 알아보기")]
+    public async Task ShowApiKeyAsync()
+    {
+        try
+        {
+            await RespondAsync($"내 키는 여기있긴 한데... 이상하게 쓸 건 아니지?\n||{Environment.GetEnvironmentVariable("TORI_API_KEY")}||");
+        } catch (Exception ex)
+        {
+            await RespondErrorAsync("비밀키", ex, "키를 보여주는 중에 오류가 났습니다!");
+        }
+    }
+
+    [SlashCommand("버전", "테토는 얼마나 성장했어?")]
+    public async Task ShowVersionAsync()
+    {
+        try
+        {
+            string[] Ver = BotEnv.botVersion.Split(".");
+            await RespondAsync($"나는 {Ver[1]}번 학습하고 {Ver[2]}번 고쳐졌어!");
+        } catch (Exception ex)
+        {
+            await RespondErrorAsync("버전", ex, "버전을 보여주는 중 오류가 났습니다!");
         }
     }
 }

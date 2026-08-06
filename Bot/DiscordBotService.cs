@@ -65,9 +65,9 @@ public class DiscordBotService : IHostedService
 
     public async Task StopAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("봇을 종료합니다...")
-        ;await _client.SetStatusAsync(UserStatus.Offline);
-        await _client.SetActivityAsync(new Game("꼭 돌아올게!"));
+        _logger.LogInformation("봇을 종료합니다...");
+        await _client.SetStatusAsync(UserStatus.Offline);
+        await _client.LogoutAsync();
         await _client.StopAsync();
     }
 
@@ -99,7 +99,7 @@ public class DiscordBotService : IHostedService
     {
         if (message.Author.IsBot) return;
 
-        // 기존 !토리 명령어 처리 (일본어 번역 처리는 TranslationService가 전담한다)
+        // 기존 !토리 명령어 처리
         if (message.Content == "!토리")
         {
             await message.Channel.SendMessageAsync("여기, 여기! 토리 여기 있어!");
