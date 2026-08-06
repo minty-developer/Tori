@@ -997,6 +997,7 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
         [Summary(description: "행동을 선택해줘")] 
         [Choice("인사하기", "인사")] 
         [Choice("쓰담쓰담~", "쓰다듬기")] 
+        [Choice("바라보기", "바라보기")]
         string Action)
     {
         try

@@ -156,15 +156,15 @@ public class AdminCommands : InteractionModuleBase<SocketInteractionContext>
     }   
 
     [SlashCommand("공지", "모달 팝업 창을 띄워 편하게 서버 공지를 작성합니다.")]
-    public async Task AnnounceModalCommand(
-        [Summary(description: "공지를 보낼 채널")] ITextChannel channel)
+    public async Task AnnounceModalCommand()
     {
         try
         {
-            _logger.LogInformation("{User}님이 '공지' 명령어로 {Channel} 채널에 공지 모달을 요청했습니다.", Context.User.Username, channel.Name);
+            _logger.LogInformation("{User}님이 '공지' 명령어로 공지-봇 채널에 공지 모달을 요청했습니다.", Context.User.Username);
 
+            long channelId = BotEnv.isDev?1479322191148613686:1529006865260740729;
             // 커스텀 ID에 채널 ID를 숨겨서 전달합니다. (모달 제출 시 어느 채널로 보낼지 복원하기 위함)
-            await Context.Interaction.RespondWithModalAsync<AnnounceModal>($"announce_modal_{channel.Id}");
+            await Context.Interaction.RespondWithModalAsync<AnnounceModal>($"announce_modal_{channelId}");
         }
         catch (Exception ex)
         {
