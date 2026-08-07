@@ -269,7 +269,7 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
     {
         try
         {
-            string filePath = "timeline.json";
+            string filePath = "../Datas/timeline.json";
 
             if (!File.Exists(filePath))
             {
@@ -339,7 +339,7 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
 
             long points = reader.GetInt64(0);
             string titlesJson = reader.IsDBNull(1) ? "" : reader.GetString(1);
-            string lastCheckIn = reader.IsDBNull(2) ? "" : reader.GetString(2);
+            string lastCheckIn = reader.IsDBNull(2) ? "" : reader.GetDateTime(2).ToString("yyyy-MM-dd HH:mm:ss");
             reader.Close();
 
             string equippedTitleKey = string.IsNullOrEmpty(titlesJson)
@@ -347,7 +347,7 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
                 : (JsonSerializer.Deserialize<model.UserTitleData>(titlesJson)?.EquippedTitleKey ?? "Newbie");
 
             string equippedTitle = "[뉴비]";
-            const string titlesPath = "titles.json";
+            const string titlesPath = "../Datas/titles.json";
             if (File.Exists(titlesPath))
             {
                 var titleDefs = JsonSerializer.Deserialize<Dictionary<string, model.TitleInfo>>(await File.ReadAllTextAsync(titlesPath));
@@ -388,7 +388,7 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
     {
         try
         {
-            string path = "titles.json";
+            string path = "../Datas/titles.json";
             if (!File.Exists(path))
             {
                 await RespondAsync("아직 상점 상품 목록(titles.json)이 준비되지 않았어!", ephemeral: true);
@@ -439,7 +439,7 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
         {
             await DeferAsync(ephemeral: true);
 
-            string path = "titles.json";
+            string path = "../Datas/titles.json";
             if (!File.Exists(path))
             {
                 await FollowupAsync("상점 데이터(titles.json)가 없어!", ephemeral: true);
@@ -563,7 +563,7 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
             updateCmd.Parameters.AddWithValue("@UserId", userId);
             updateCmd.ExecuteNonQuery();
 
-            string path = "titles.json";
+            string path = "../Datas/titles.json";
             string titleName = titleKey;
             if (File.Exists(path))
             {
@@ -798,7 +798,7 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
         System.Func<SocketMessage, Task>? handler = null;
         try
         {
-            string path = "songs.json";
+            string path = "../Datas/songs.json";
             if (!File.Exists(path))
             {
                 await RespondAsync("퀴즈 데이터(songs.json) 파일이 없어! 만들어줘.", ephemeral: true);

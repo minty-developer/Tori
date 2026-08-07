@@ -11,7 +11,7 @@ public class ApiController : ControllerBase
     [HttpGet]
     public IActionResult GetOpenApi()
     {
-        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "docs", "OpenApi.json");
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Docs", "OpenApi.json");
 
         if (!System.IO.File.Exists(filePath))
         {
