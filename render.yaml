@@ -1,5 +1,5 @@
 services:
-  # 1. MySQL 데이터베이스 서비스 (임시 컨테이너 방식 대신 Render 디스크 활용)
+  # 1. MySQL 데이터베이스 서비스
   - type: pserv
     name: tori-db
     runtime: docker
@@ -12,7 +12,7 @@ services:
       - key: MYSQL_DATABASE
         value: tori_db
       - key: MYSQL_ROOT_PASSWORD
-        sync: false # Render 대시보드 화면에서 직접 입력하도록 설정 (보안 유지!)
+        sync: false # Render 대시보드 화면에서 직접 입력하도록 설정!
 
   # 2. 봇(Bot) 서비스
   - type: pserv
@@ -21,4 +21,4 @@ services:
     plan: starter
     envVars:
       - key: ConnectionStrings__DefaultConnection
-        value: Server=tori-db;Database=MYSQL_DATABASE;Uid=root;Pwd=PASSWORD_FROM_RENDER;
+        sync: false # 💡 이것도 Render 대시보드에서 직접 비밀번호 포함해서 입력하도록 설정!
