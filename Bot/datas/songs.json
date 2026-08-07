@@ -1,0 +1,902 @@
+[
+  {
+    "Title": "멜트",
+    "HintType": "초성",
+    "Hint": "ㅁㅌ",
+    "Description": "슈퍼셀! 데이트 전날 밤의 두근두근한 마음을 담은 명곡"
+  },
+  {
+    "Title": "하츠네미쿠의 소실",
+    "HintType": "초성",
+    "Hint": "ㅎㅊㅁㅋㅇ ㅅㅅ",
+    "Description": "하츠네 미쿠의 고속 노래로 유명한 대표곡"
+  },
+  {
+    "Title": "로미오와신데렐라",
+    "HintType": "초성",
+    "Hint": "ㄹㅁㅇㅇ ㅅㄷㄹㄹ",
+    "Description": "당돌하고 매혹적인 가사가 매력적인 곡"
+  },
+  {
+    "Title": "월드 이즈 마인",
+    "HintType": "초성",
+    "Hint": "ㅇㄹㄷ ㅇㅈ ㅁㅇ",
+    "Description": "세계에서 제일 가는 공주님인 아가씨의 곡"
+  },
+  {
+    "Title": "센본자쿠라",
+    "HintType": "초성",
+    "Hint": "ㅅㅂㅈㅋㄹ",
+    "Description": "화려한 전통풍 사운드와 함께 피어나는 천본앵"
+  },
+  {
+    "Title": "오버라이드",
+    "HintType": "초성",
+    "Hint": "ㅇㅂㄹㅇㄷ",
+    "Description": "다이아다이아다이아다이키라이! 빠른 템포의 카사네 테토 인기 곡"
+  },
+  {
+    "Title": "메스머라이저",
+    "HintType": "초성",
+    "Hint": "ㅁㅅㅁㄹㅇㅈ",
+    "Description": "아나타 단단 네무쿠 나루... 최면을 거는 듯한 듀엣 곡"
+  },
+  {
+    "Title": "롤링 걸",
+    "HintType": "초성",
+    "Hint": "ㄹㄹ ㄱ",
+    "Description": "굴러가고 또 굴러가는 소년소녀의 아픔을 담은 wowaka의 명곡"
+  },
+  {
+    "Title": "지구 최후의 고백을",
+    "HintType": "초성",
+    "Hint": "ㅈㄱ ㅊㅎㅇ ㄱㅂㅇ",
+    "Description": "세계가 끝나는 날 전하고 싶은 마지막 고백"
+  },
+  {
+    "Title": "블랙 록 슈터",
+    "HintType": "초성",
+    "Hint": "ㅂㄹ ㄹ ㅅㅌ",
+    "Description": "푸른 불꽃을 품은 소녀의 이야기를 다룬 곡"
+  },
+  {
+    "Title": "소라토보",
+    "HintType": "초성",
+    "Hint": "ㅅㄹㅌㅂ",
+    "Description": "하늘을 나는 듯한 청량한 사운드의 곡"
+  },
+  {
+    "Title": "카게로 데이즈",
+    "HintType": "초성",
+    "Hint": "ㅋㄱㄹ ㄷㅇㅈ",
+    "Description": "반복되는 8월 15일의 비극을 담은 카게로 프로젝트 곡"
+  },
+  {
+    "Title": "뇌내혁명 걸",
+    "HintType": "초성",
+    "Hint": "ㄴㄴㅎㅁ ㄱ",
+    "Description": "중독성 있는 리듬과 독특한 가사의 곡"
+  },
+  {
+    "Title": "마트료시카",
+    "HintType": "초성",
+    "Hint": "ㅁㅌㄹㅅㅋ",
+    "Description": "하치(HACHI)의 대표적인 메이저 보카로 명곡"
+  },
+  {
+    "Title": "인간은 누구나",
+    "HintType": "초성",
+    "Hint": "ㅇㄱㅇ ㄴㄱㄴ",
+    "Description": "철학적인 메시지를 담은 보카로 곡"
+  },
+  {
+    "Title": "꼬마소녀의 사기",
+    "HintType": "초성",
+    "Hint": "ㄲㅁㅅㄴㅇ ㅅㄱ",
+    "Description": "어두우면서도 몰입감 있는 전개의 곡"
+  },
+  {
+    "Title": "우타이타이",
+    "HintType": "초성",
+    "Hint": "ㅇㅌㅇㅌㅇ",
+    "Description": "노래하고 싶어! 라는 감정을 폭발시키는 곡"
+  },
+  {
+    "Title": "틀니",
+    "HintType": "초성",
+    "Hint": "ㅌㄴ",
+    "Description": "중독성 넘치는 멜로디와 독특한 감성의 인기 곡"
+  },
+  {
+    "Title": "실패소녀",
+    "HintType": "초성",
+    "Hint": "ㅅㅍㅅㄴ",
+    "Description": "카사네 테토의 매운맛 감성이 돋보이는 곡"
+  },
+  {
+    "Title": "고스트 룰",
+    "HintType": "초성",
+    "Hint": "ㄱㅅㅌ ㄹ",
+    "Description": "DECO*27의 세련되고 강렬한 기타 록 곡"
+  },
+  {
+    "Title": "에일리언 에일리언",
+    "HintType": "초성",
+    "Hint": "ㅇㅇㄹㅇ ㅇㅇㄹㅇ",
+    "Description": "귀여운 외계인 콘셉트와 중독적인 후렴구의 나유탄 성인 곡"
+  },
+  {
+    "Title": "뱀파이어",
+    "HintType": "초성",
+    "Hint": "ㅂㅁㅍㅇㅇ",
+    "Description": "너의 전부를 빼앗아 가겠다는 달콤살벌한 DECO*27의 곡"
+  },
+  {
+    "Title": "안티 다크 사이드",
+    "HintType": "초성",
+    "Hint": "ㅇㅌ ㄷㅋ ㅅㅇㄷ",
+    "Description": "강렬한 비트가 인상적인 보카로 곡"
+  },
+  {
+    "Title": "비밀경찰",
+    "HintType": "초성",
+    "Hint": "ㅂㅁㄱㅊ",
+    "Description": "미쿠가 비밀경찰이 되어 당신을 감시하는 고속 록 곡"
+  },
+  {
+    "Title": "상상력 포레스트",
+    "HintType": "초성",
+    "Hint": "ㅅㅅㄹ ㅍㄹㅅㅌ",
+    "Description": "숲속에서 펼쳐지는 상상의 나래를 담은 곡"
+  },
+  {
+    "Title": "너의 체온",
+    "HintType": "초성",
+    "Hint": "ㄴㅇ ㅊㅇ",
+    "Description": "애절한 감성의 멜로디가 빛나는 명곡"
+  },
+  {
+    "Title": "지구는 너와 나의 행성",
+    "HintType": "초성",
+    "Hint": "ㅈㄱㄴ ㄴㅇ ㄴㅇ ㅎㅅ",
+    "Description": "따뜻한 분위기를 자아내는 보카로 곡"
+  },
+  {
+    "Title": "테토리스",
+    "HintType": "초성",
+    "Hint": "ㅌㅌㄹㅅ",
+    "Description": "테토가 부르는 중독적인 테토리스 리듬 곡"
+  },
+  {
+    "Title": "디기리",
+    "HintType": "초성",
+    "Hint": "ㄷㄱㄹ",
+    "Description": "빠른 비트와 유쾌한 가사가 돋보이는 곡"
+  },
+  {
+    "Title": "인비저블",
+    "HintType": "초성",
+    "Hint": "ㅇㅂㅈㅂ",
+    "Description": "투명해진 소년소녀의 폭발적인 감정 스피드 록"
+  },
+  {
+    "Title": "아기자기한 파티",
+    "HintType": "초성",
+    "Hint": "ㅇㄱㅈㄱㅎ ㅍㅌ",
+    "Description": "신나는 분위기의 보컬로이드 곡"
+  },
+  {
+    "Title": "도너츠 홀",
+    "HintType": "초성",
+    "Hint": "ㄷㄴㅊ ㅎ",
+    "Description": "구멍 난 마음을 노래하는 하치의 명곡"
+  },
+  {
+    "Title": "패러사이트",
+    "HintType": "초성",
+    "Hint": "ㅍㄹㅅㅇㅌ",
+    "Description": "강렬한 사운드가 매력적인 곡"
+  },
+  {
+    "Title": "아이언",
+    "HintType": "초성",
+    "Hint": "ㅇㅇㅇ",
+    "Description": "묵직한 베이스 라인이 특징인 곡"
+  },
+  {
+    "Title": "연애재판",
+    "HintType": "초성",
+    "Hint": "ㅇㅇㅈㅍ",
+    "Description": "법정에서 펼쳐지는 귀여운 사랑싸움 40mP 명곡"
+  },
+  {
+    "Title": "패션",
+    "HintType": "초성",
+    "Hint": "ㅍㅅ",
+    "Description": "트렌디한 감각의 보카로 곡"
+  },
+  {
+    "Title": "대체불가",
+    "HintType": "초성",
+    "Hint": "ㄷㅊㅂㄱ",
+    "Description": "독보적인 개성을 뽐내는 곡"
+  },
+  {
+    "Title": "비바 해피",
+    "HintType": "초성",
+    "Hint": "ㅂㅂ ㅎㅍ",
+    "Description": "들을수록 기분이 좋아지는 Mitchie M의 톡톡 튀는 곡"
+  },
+  {
+    "Title": "원더랜드",
+    "HintType": "초성",
+    "Hint": "ㅇㄷㄹㄷ",
+    "Description": "이상한 나라에 빠진 듯한 몽환적인 곡"
+  },
+  {
+    "Title": "세상에서 제일 가난한 소녀",
+    "HintType": "초성",
+    "Hint": "ㅅㅅㅇㅅ ㅈㅇ ㄱㄴㅎ ㅅㄴ",
+    "Description": "마음을 울리는 가사가 인상적인 곡"
+  },
+  {
+    "Title": "프레임",
+    "HintType": "초성",
+    "Hint": "ㅍㄹㅇ",
+    "Description": "화면 속 세상 이야기를 다룬 곡"
+  },
+  {
+    "Title": "굿바이 선언",
+    "HintType": "초성",
+    "Hint": "ㄱㅂㅇ ㅅㅇ",
+    "Description": "Chinozo의 메가 히트작, 복잡한 세상과 이별하는 곡"
+  },
+  {
+    "Title": "킹",
+    "HintType": "초성",
+    "Hint": "ㅋ",
+    "Description": "Kanaria의 중독적인 멜로디와 군중을 이끄는 왕의 곡"
+  },
+  {
+    "Title": "여왕벌",
+    "HintType": "초성",
+    "Hint": "ㅇㅇㅂ",
+    "Description": "카리스마 넘치는 보컬이 돋보이는 곡"
+  },
+  {
+    "Title": "사이코",
+    "HintType": "초성",
+    "Hint": "ㅅㅇㅋ",
+    "Description": "기괴하면서도 매력적인 분위기의 곡"
+  },
+  {
+    "Title": "시네마",
+    "HintType": "초성",
+    "Hint": "ㅅㄴㅁ",
+    "Description": "한 편의 영화를 보는 듯한 세련된 곡"
+  },
+  {
+    "Title": "아이덴티티",
+    "HintType": "초성",
+    "Hint": "ㅇㅇㄷㅌㅌ",
+    "Description": "나 자신을 찾아가는 과정을 담은 곡"
+  },
+  {
+    "Title": "대단한 파도",
+    "HintType": "초성",
+    "Hint": "ㄷㄷㅎ ㅍㄷ",
+    "Description": "밀려오는 감정을 파도에 비유한 곡"
+  },
+  {
+    "Title": "라스트 리조트",
+    "HintType": "초성",
+    "Hint": "ㄹㅅㅌ ㄹㅈㅌ",
+    "Description": "마지막 휴식처를 찾아 떠나는 감성적인 곡"
+  },
+  {
+    "Title": "소녀레이",
+    "HintType": "초성",
+    "Hint": "ㅅㄴㄹㅇ",
+    "Description": "청량하지만 어딘가 쓸쓸하고 섬뜩한 청춘을 담은 미키토P의 곡"
+  },
+  {
+    "Title": "프랑켄슈타인",
+    "HintType": "초성",
+    "Hint": "ㅍㄹㅋㅅㅌㅇ",
+    "Description": "괴물 같은 조각들을 맞춰나가는 매운맛 보카로 곡"
+  },
+  {
+    "Title": "모자이크 롤",
+    "HintType": "초성",
+    "Hint": "ㅁㅈㅇㅋ ㄹ",
+    "Description": "DECO*27의 대표적인 가상과 현실을 넘나드는 명곡"
+  },
+  {
+    "Title": "심장마비",
+    "HintType": "초성",
+    "Hint": "ㅅㅈㅁㅂ",
+    "Description": "숨이 턱 막히는 중독성 있는 비트의 곡"
+  },
+  {
+    "Title": "신세계",
+    "HintType": "초성",
+    "Hint": "ㅅㅅㄱ",
+    "Description": "새로운 세상을 여는 웅장하고 신비로운 멜로디"
+  },
+  {
+    "Title": "심해소녀",
+    "HintType": "초성",
+    "Hint": "ㅅㅎㅅㄴ",
+    "Description": "바닷속 깊은 곳으로 가라앉는 소녀의 애절한 이야기"
+  },
+  {
+    "Title": "아지랑이 데이즈",
+    "HintType": "초성",
+    "Hint": "ㅇㅈㄹㅇ ㄷㅇㅈ",
+    "Description": "8월 15일의 반복되는 비극을 노래하는 카게프로 명곡"
+  },
+  {
+    "Title": "체스판",
+    "HintType": "초성",
+    "Hint": "ㅊㅅㅍ",
+    "Description": "흑과 백, 전략적인 체스판 위의 감정을 비유한 곡"
+  },
+  {
+    "Title": "텔레포트 11",
+    "HintType": "초성",
+    "Hint": "ㅌㄹㅍㅌ 11",
+    "Description": "시공간을 넘어 순간이동하는 듯한 전개"
+  },
+  {
+    "Title": "파라솔",
+    "HintType": "초성",
+    "Hint": "ㅍㄹㅅ",
+    "Description": "햇살 아래 펼쳐진 파라솔 느낌의 상큼한 곡"
+  },
+  {
+    "Title": "하츠네 미쿠의 격창",
+    "HintType": "초성",
+    "Hint": "ㅎㅊㅁㅋㅇ ㄱㅊ",
+    "Description": "소실을 잇는 폭풍 같은 고속 폭창 보카로 대표곡"
+  },
+  {
+    "Title": "해피 신디사이저",
+    "HintType": "초성",
+    "Hint": "ㅎㅍ ㅅㄷㅅㅇㅈ",
+    "Description": "EasyPop의 멜로디컬하고 신나는 루카&메구미 듀엣 곡"
+  },
+  {
+    "Title": "허수아비",
+    "HintType": "초성",
+    "Hint": "ㅎㅅㅇㅂ",
+    "Description": "텅 빈 밭을 지키는 허수아비의 씁쓸한 이야기"
+  },
+  {
+    "Title": "화염",
+    "HintType": "초성",
+    "Hint": "ㅎㅇ",
+    "Description": "모든 것을 태워버릴 듯한 뜨거운 사운드의 곡"
+  },
+  {
+    "Title": "히바나",
+    "HintType": "초성",
+    "Hint": "ㅎㅂㄴ",
+    "Description": "불꽃처럼 터지는 DECO*27의 스파크 록 곡"
+  },
+  {
+    "Title": "나의 R",
+    "HintType": "초성",
+    "Hint": "ㄴㅇ R",
+    "Description": "옥상 위에서 일어나는 신비롭고 아련한 이야기"
+  },
+  {
+    "Title": "도쿄 테디베어",
+    "HintType": "초성",
+    "Hint": "ㄷㅋ ㅌㄷㅂㅇ",
+    "Description": "Neru의 찢어질 듯한 감정이 담긴 카가미네 린 대표곡"
+  },
+  {
+    "Title": "로스트 원의 호곡",
+    "HintType": "초성",
+    "Hint": "ㄹㅅㅌ ㅇㅇ ㅎㄱ",
+    "Description": "칠판 위의 수학 공식과 학생의 아픔을 노래한 Neru 명곡"
+  },
+  {
+    "Title": "마왕",
+    "HintType": "초성",
+    "Hint": "ㅁㅇ",
+    "Description": "압도적인 위엄과 무게감을 풍기는 보카로 곡"
+  },
+  {
+    "Title": "베놈",
+    "HintType": "초성",
+    "Hint": "ㅂㄴ",
+    "Description": "바구바구 독을 품은 치노조 특유의 리드미컬 댄스 곡"
+  },
+  {
+    "Title": "샤를",
+    "HintType": "초성",
+    "Hint": "ㅅㄹ",
+    "Description": "벌룬(수다)의 이별 감성 폭발 메가 히트곡"
+  },
+  {
+    "Title": "신기루",
+    "HintType": "초성",
+    "Hint": "ㅅㄱㄹ",
+    "Description": "사막 너머 보이는 환상처럼 아련한 곡"
+  },
+  {
+    "Title": "아지랑이 걸",
+    "HintType": "초성",
+    "Hint": "ㅇㅈㄹㅇ ㄱ",
+    "Description": "더위 속에 아지랑이처럼 피어오르는 몽환적 곡"
+  },
+  {
+    "Title": "악식딸 컨체르토",
+    "HintType": "초성",
+    "Hint": "ㅇㅅㄸ ㅋㅊㄹㅌ",
+    "Description": "악의 딸 시리즈, 먹보 메이코의 웅장한 잔혹극"
+  },
+  {
+    "Title": "악의 하인",
+    "HintType": "초성",
+    "Hint": "ㅇㅇ ㅎㅇ",
+    "Description": "너를 위해서라면 나는 악마라도 되겠어, 렌의 슬픈 이야기"
+  },
+  {
+    "Title": "알고리즘",
+    "HintType": "초성",
+    "Hint": "ㅇㄱㄹㅈ",
+    "Description": "정해진 공식처럼 흘러가는 전자음악"
+  },
+  {
+    "Title": "에고록",
+    "HintType": "초성",
+    "Hint": "ㅇㄱㄹ",
+    "Description": "스리이(Surii)의 신나고 짧고 굵은 신선한 록 곡"
+  },
+  {
+    "Title": "엘리",
+    "HintType": "초성",
+    "Hint": "ㅇㄹ",
+    "Description": "누군가의 이름을 부르는 듯한 묵직한 보카로 곡"
+  },
+  {
+    "Title": "오렌지",
+    "HintType": "초성",
+    "Hint": "ㅇㄹㅈ",
+    "Description": "노을빛 오렌지색 눈물을 자극하는 토마P의 감성 곡"
+  },
+  {
+    "Title": "우타카타",
+    "HintType": "초성",
+    "Hint": "ㅇㅌㅋㅌ",
+    "Description": "물거품처럼 사라지는 서정적인 분위기의 곡"
+  },
+  {
+    "Title": "육조 년과 하룻밤 이야기",
+    "HintType": "초성",
+    "Hint": "ㅇㅈ ㄴㄱ ㅎㄹㅂ ㅇㅇㄱ",
+    "Description": "kemu의 신화적인 속도감을 자랑하는 IA 명곡"
+  },
+  {
+    "Title": "이름 없는 우타",
+    "HintType": "초성",
+    "Hint": "ㅇㄹ ㅇㄴ ㅇㅌ",
+    "Description": "제목 없이 마음을 전하는 소박하고 아름다운 곡"
+  },
+  {
+    "Title": "작곡가의 사정",
+    "HintType": "초성",
+    "Hint": "ㅈㄱㄱㅇ ㅅㅈ",
+    "Description": "마감과 창작의 고통을 노래하는 리얼한 이야기"
+  },
+  {
+    "Title": "전뇌 유희",
+    "HintType": "초성",
+    "Hint": "ㅈㄴ ㅇㅎ",
+    "Description": "사이버 공간에서 펼쳐지는 게임 같은 피아노 록"
+  },
+  {
+    "Title": "죄와 벌",
+    "HintType": "초성",
+    "Hint": "ㅈㅇ ㅂ",
+    "Description": "DECO*27의 일렉 기타 사운드가 폭발하는 초기 명곡"
+  },
+  {
+    "Title": "천재 록",
+    "HintType": "초성",
+    "Hint": "ㅊㅈ ㄹ",
+    "Description": "자칭 천재가 부르는 에너지 넘치는 카리스마 록"
+  },
+  {
+    "Title": "카게후미",
+    "HintType": "초성",
+    "Hint": "ㅋㄱㅎㅁ",
+    "Description": "그림자를 밟으며 걷는 애틋한 가을 감성의 곡"
+  },
+  {
+    "Title": "컬러풀 X 멜로디",
+    "HintType": "초성",
+    "Hint": "ㅋㄹㅍ X ㅁㄹㄷ",
+    "Description": "미쿠와 린의 통통 튀는 무지갯빛 콜라보 명곡"
+  },
+  {
+    "Title": "코코로",
+    "HintType": "초성",
+    "Hint": "ㅋㅋㄹ",
+    "Description": "마음을 얻게 된 로봇의 감동적인 이야기"
+  },
+  {
+    "Title": "큐트 카노조",
+    "HintType": "초성",
+    "Hint": "ㅋㅌ ㅋㄴㅈ",
+    "Description": "귀여운 여자친구인 줄 알았는데...? 광기의 스리이 곡"
+  },
+  {
+    "Title": "타임 머신",
+    "HintType": "초성",
+    "Hint": "ㅌㅇ ㅁㅅ",
+    "Description": "옛 추억으로 시간을 되돌리고 싶은 164x40mP 명곡"
+  },
+  {
+    "Title": "파라솔 사이다",
+    "HintType": "초성",
+    "Hint": "ㅍㄹㅅ ㅅㅇㄷ",
+    "Description": "톡 쏘는 탄산처럼 톡톡 튀는 여름 청량 곡"
+  },
+  {
+    "Title": "판도라 VOXX",
+    "HintType": "초성",
+    "Hint": "ㅍㄷㄹ VOXX",
+    "Description": "열어서는 안 될 상자가 열리는 스릴 넘치는 전개"
+  },
+  {
+    "Title": "패닉 파티",
+    "HintType": "초성",
+    "Hint": "ㅍㄴ ㅍㅌ",
+    "Description": "모두가 혼란에 빠진 미치광이 축제"
+  },
+  {
+    "Title": "폰코츠",
+    "HintType": "초성",
+    "Hint": "ㅍㅋㅊ",
+    "Description": "어딘가 허당이고 엉뚱한 매력의 뚝딱이 노래"
+  },
+  {
+    "Title": "프랑켄 슈타인",
+    "HintType": "초성",
+    "Hint": "ㅍㄹㅋ ㅅㅌㅇ",
+    "Description": "이것저것 고쳐 쓰며 완성된 인공지능 같은 곡"
+  },
+  {
+    "Title": "피에로",
+    "HintType": "초성",
+    "Hint": "ㅍㅇㄹ",
+    "Description": "웃고 있지만 눈물을 흘리는 광대의 서글픈 곡"
+  },
+  {
+    "Title": "하트 아라모드",
+    "HintType": "초성",
+    "Hint": "ㅎㅌ ㅇㄹㅁㄷ",
+    "Description": "달콤한 디저트 같은 사랑스러운 멜로디"
+  },
+  {
+    "Title": "헬로 플레이어",
+    "HintType": "초성",
+    "Hint": "ㅎㄹ ㅍㄹㅇㅇ",
+    "Description": "게임 속 유저에게 인사를 건네는 신나는 곡"
+  },
+  {
+    "Title": "혼돈의 루프",
+    "HintType": "초성",
+    "Hint": "ㅎㄷㅇ ㄹㅍ",
+    "Description": "끝없이 반복되는 굴레 속 빠져나갈 수 없는 비트"
+  },
+  {
+    "Title": "히토리보치엔비",
+    "HintType": "초성",
+    "Hint": "ㅎㅌㄹㅂㅊㅇㅂ",
+    "Description": "외톨이의 질투와 외로움을 담은 감성 보카로 곡"
+  },
+  {
+    "Title": "갓에라",
+    "HintType": "초성",
+    "Hint": "ㄱㅇㄹ",
+    "Description": "신이라 불리는 자들의 화려한 멜로디"
+  },
+  {
+    "Title": "거미실",
+    "HintType": "초성",
+    "Hint": "ㄱㅁㅅ",
+    "Description": "얽히고설킨 촘촘한 거미줄 같은 곡"
+  },
+  {
+    "Title": "걸작",
+    "HintType": "초성",
+    "Hint": "ㄱㅈ",
+    "Description": "완벽한 걸작을 만들기 위한 광기의 창작극"
+  },
+  {
+    "Title": "검은 고양이",
+    "HintType": "초성",
+    "Hint": "ㄱㅇ ㄱㅇㅇ",
+    "Description": "밤길을 가로지르는 불운과 매혹의 고양이"
+  },
+  {
+    "Title": "고양이의 보은",
+    "HintType": "초성",
+    "Hint": "ㄱㅇㅇㅇ ㅂㅇ",
+    "Description": "귀여우면서도 기묘한 은혜返し 이야기"
+  },
+  {
+    "Title": "공상 숲",
+    "HintType": "초성",
+    "Hint": "ㄱㅅ ㅅ",
+    "Description": "카게프로의 따뜻하고 상상력 넘치는 숲 이야기"
+  },
+  {
+    "Title": "괴물",
+    "HintType": "초성",
+    "Hint": "ㄱㅁ",
+    "Description": "내 안의 어두운 괴물을 부르는 비트"
+  },
+  {
+    "Title": "구름과 유령",
+    "HintType": "초성",
+    "Hint": "ㄱㄹㄱ ㅇㄹ",
+    "Description": "여름 하늘 구름 아래 떠도는 아련한 환상"
+  },
+  {
+    "Title": "나의 시간",
+    "HintType": "초성",
+    "Hint": "ㄴㅇ ㅅㄱ",
+    "Description": "멈춰버린 시계 바늘을 바라보는 가슴 먹먹한 곡"
+  },
+  {
+    "Title": "낙원",
+    "HintType": "초성",
+    "Hint": "ㄴㅇ",
+    "Description": "아름답지만 어딘가 스산한 유토피아"
+  },
+  {
+    "Title": "나비효과",
+    "HintType": "초성",
+    "Hint": "ㄴㅂㅎㄱ",
+    "Description": "작은 나비의 날갯짓이 퍼져나가는 퍼즐 같은 곡"
+  },
+  {
+    "Title": "네버랜드",
+    "HintType": "초성",
+    "Hint": "ㄴㅂㄹㄷ",
+    "Description": "어른이 되지 않는 영원한 아이들의 섬"
+  },
+  {
+    "Title": "눈꽃",
+    "HintType": "초성",
+    "Hint": "ㄴㄲ",
+    "Description": "하얗게 내리는 눈송이처럼 아련한 피아노 명곡"
+  },
+  {
+    "Title": "달빛 이야기",
+    "HintType": "초성",
+    "Hint": "ㄷㅂ ㅇㅇㄱ",
+    "Description": "밤하늘 은은한 달빛 아래 속삭이는 노래"
+  },
+  {
+    "Title": "댄스 로봇 댄스",
+    "HintType": "초성",
+    "Hint": "ㄷㅅ ㄹㅂ ㄷㅅ",
+    "Description": "나유탄 성인의 멈출 수 없는 삐리삐리 로봇 댄스 곡"
+  },
+  {
+    "Title": "도쿄 플래시",
+    "HintType": "초성",
+    "Hint": "ㄷㅋ ㅍㄹㅅ",
+    "Description": "화려한 도시의 밤을 비추는 트렌디한 감성"
+  },
+  {
+    "Title": "드림 걸",
+    "HintType": "초성",
+    "Hint": "ㄷㄹ ㄱ",
+    "Description": "꿈속을 헤매는 환상적인 소녀의 곡"
+  },
+  {
+    "Title": "디스토피아",
+    "HintType": "초성",
+    "Hint": "ㄷㅅㅌㅍㅇ",
+    "Description": "어두운 미래 도시의 절망을 그린 보카로 록"
+  },
+  {
+    "Title": "라스트 라이드",
+    "HintType": "초성",
+    "Hint": "ㄹㅅㅌ ㄹㅇㄷ",
+    "Description": "마지막 주행을 달리는 질주감 넘치는 사운드"
+  },
+  {
+    "Title": "레드 라이트",
+    "HintType": "초성",
+    "Hint": "ㄹㄷ ㄹㅇㅌ",
+    "Description": "빨간 신호등 앞에 멈춰 선 감정의 경고"
+  },
+  {
+    "Title": "루시아",
+    "HintType": "초성",
+    "Hint": "ㄹㅅㅇ",
+    "Description": "성스러운 빛을 뜻하는 신비로운 분위기의 노래"
+  },
+  {
+    "Title": "마리오네트",
+    "HintType": "초성",
+    "Hint": "ㅁㄹㅇㄴㅌ",
+    "Description": "실에 매달려 조종당하는 인형의 서글픈 춤"
+  },
+  {
+    "Title": "매지컬 미쿠",
+    "HintType": "초성",
+    "Hint": "ㅁㅈㅋ ㅁㅋ",
+    "Description": "마법에 걸린 듯 신나고 톡톡 튀는 미쿠의 노래"
+  },
+  {
+    "Title": "메이데이",
+    "HintType": "초성",
+    "Hint": "ㅁㅇㄷㅇ",
+    "Description": "구조 신호를 보내는 듯한 긴박한 리듬"
+  },
+  {
+    "Title": "미라클 파티",
+    "HintType": "초성",
+    "Hint": "ㅁㄹㅋ ㅍㅌ",
+    "Description": "기적이 일어나는 밤의 화려한 축제"
+  },
+  {
+    "Title": "바다의 노래",
+    "HintType": "초성",
+    "Hint": "ㅂㄷㅇ ㄴㄹ",
+    "Description": "푸른 파도가 밀려오는 감성적인 바다 이야기"
+  },
+  {
+    "Title": "밤을 달리다",
+    "HintType": "초성",
+    "Hint": "ㅂㅇ ㄷㄹㄷ",
+    "Description": "어둠을 뚫고 끝없이 달려나가는 비트"
+  },
+  {
+    "Title": "버츄얼 월드",
+    "HintType": "초성",
+    "Hint": "ㅂㅊㅇ ㅇㄷ",
+    "Description": "가상 세계 속에서 피어나는 인공지능의 감정"
+  },
+  {
+    "Title": "별의 여정",
+    "HintType": "초성",
+    "Hint": "ㅂㅇ ㅇㅈ",
+    "Description": "은하수를 건너 펼쳐지는 웅장한 오디세이"
+  },
+  {
+    "Title": "블랙홀",
+    "HintType": "초성",
+    "Hint": "ㅂㄹㅎ",
+    "Description": "모든 것을 빨아들이는 강렬하고 어두운 중력"
+  },
+  {
+    "Title": "사이렌",
+    "HintType": "초성",
+    "Hint": "ㅅㅇㄹ",
+    "Description": "경고음처럼 울려 퍼지는 중독성 짙은 곡"
+  },
+  {
+    "Title": "서커스 파라다이스",
+    "HintType": "초성",
+    "Hint": "ㅅㅋㅅ ㅍㄹㄷㅇㅅ",
+    "Description": "기이하고 화려한 서커스 천막 아래의 비밀"
+  },
+  {
+    "Title": "소원을 말해봐",
+    "HintType": "초성",
+    "Hint": "ㅅㅇㅇ ㅁㅎㅂ",
+    "Description": "밤하늘 유성우 아래 별에게 비는 소원"
+  },
+  {
+    "Title": "시크릿 가든",
+    "HintType": "초성",
+    "Hint": "ㅅㅋㄹ ㄱㄷ",
+    "Description": "아무도 모르는 나만의 비밀 정원"
+  },
+  {
+    "Title": "심장의 고동",
+    "HintType": "초성",
+    "Hint": "ㅅㅈㅇ ㄱㄷ",
+    "Description": "쿵쾅거리는 심장 소리를 닮은 폭발적 비트"
+  },
+  {
+    "Title": "아이스크림",
+    "HintType": "초성",
+    "Hint": "ㅇㅇㅅㅋㄹ",
+    "Description": "녹아내리는 달콤한 여름날의 아이스크림"
+  },
+  {
+    "Title": "어둠 속의 빛",
+    "HintType": "초성",
+    "Hint": "ㅇㄷ ㅅㅇ ㅂ",
+    "Description": "칠흑 같은 어둠을 찢는 한 줄기 희망의 노래"
+  },
+  {
+    "Title": "에메랄드 시티",
+    "HintType": "초성",
+    "Hint": "ㅇㅁㄹㄷ ㅅㅌ",
+    "Description": "보석처럼 반짝이는 에메랄드 빛 도시"
+  },
+  {
+    "Title": "오로라",
+    "HintType": "초성",
+    "Hint": "ㅇㄹㄹ",
+    "Description": "북쪽 하늘을 물들이는 신비로운 오로라"
+  },
+  {
+    "Title": "유리구두",
+    "HintType": "초성",
+    "Hint": "ㅇㄹㄱㄷ",
+    "Description": "12시가 지나면 깨어나는 신데렐라의 꿈"
+  },
+  {
+    "Title": "은하수 철도",
+    "HintType": "초성",
+    "Hint": "ㅇㅎㅅ ㅊㄷ",
+    "Description": "밤하늘 별빛을 타고 달리는 기차 여행"
+  },
+  {
+    "Title": "시간의 톱니바퀴",
+    "HintType": "초성",
+    "Hint": "ㅅㄱㅇ ㅌㄴㅂㅋ",
+    "Description": "째깍거리며 멈추지 않는 태엽 시계 소리"
+  },
+  {
+    "Title": "체리 블라썸",
+    "HintType": "초성",
+    "Hint": "ㅊㄹ ㅂㄹㅆ",
+    "Description": "봄바람에 흩날리는 분홍빛 벚꽃의 감성"
+  },
+  {
+    "Title": "카니발",
+    "HintType": "초성",
+    "Hint": "ㅋㄴㅂ",
+    "Description": "화려한 가면을 쓰고 즐기는 광란의 축제"
+  },
+  {
+    "Title": "크리스탈 멜로디",
+    "HintType": "초성",
+    "Hint": "ㅋㄹㅅㅌ ㅁㄹㄷ",
+    "Description": "투명하게 맑고 깨끗한 영혼의 음악"
+  },
+  {
+    "Title": "타임리스",
+    "HintType": "초성",
+    "Hint": "ㅌㅇㅁㄹㅅ",
+    "Description": "세월이 지나도 변하지 않는 영원한 노래"
+  },
+  {
+    "Title": "판타지아",
+    "HintType": "초성",
+    "Hint": "ㅍㅌㅈㅇ",
+    "Description": "상상했던 모든 것이 현실이 되는 환상곡"
+  },
+  {
+    "Title": "프리즘",
+    "HintType": "초성",
+    "Hint": "ㅍㄹㅈ",
+    "Description": "빛을 받아 일곱 색깔 무지개로 갈라지는 멜로디"
+  },
+  {
+    "Title": "하늘의 저편",
+    "HintType": "초성",
+    "Hint": "ㅎㄴㅇ ㅈㅍ",
+    "Description": "구름 너머 먼 곳으로 날아가는 미쿠의 노랫소리"
+  },
+  {
+    "Title": "홀로그램",
+    "HintType": "초성",
+    "Hint": "ㅎㄹㄱㄹ",
+    "Description": "허공에 떠오른 보컬로이드의 빛나는 환영"
+  }
+]

@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 });
 
 BotEnv.CheckEnv();
-builder.Configuration.Sources.Clear();
+// builder.Configuration.Sources.Clear();
 builder.Configuration
     .SetBasePath(AppContext.BaseDirectory)
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
@@ -95,8 +95,8 @@ app.Run(BotEnv.isDev? $"http://localhost:{port}": $"http://0.0.0.0:{port}");
 
 public static class BotEnv
 {
-    public static bool isDev = false;
-    public static string botVersion = "1.2.0";
+    public static bool isDev = true;
+    public static string botVersion = "1.3.0";
     
     public static void CheckEnv() {
         if(isDev) Env.Load();

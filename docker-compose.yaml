@@ -1,0 +1,30 @@
+services:
+  tori-db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: tori_db
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    # 1. MySQL이 진짜 켜졌는지 5초마다 체크
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  tori-bot:
+    build: .
+    # 2. tori-db가 완전히 ready 상태(service_healthy)가 될 때까지 봇 실행 대기
+    depends_on:
+      tori-db:
+        condition: service_healthy
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=tori-db;Database=tori_db;Uid=root;Pwd=${MYSQL_ROOT_PASSWORD};"

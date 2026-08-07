@@ -1,0 +1,302 @@
+{
+  "Newbie": {
+    "Name": "[뉴비]",
+    "Description": "토리를 처음 찾아온 방문자",
+    "Price": 0,
+    "Condition": "Default"
+  },
+  "MorningBird": {
+    "Name": "[부지런한 새싹]",
+    "Description": "출석체크 5일차! 부지런함의 증표",
+    "Price": 1000,
+    "Condition": "Buyable"
+  },
+  "Translator": {
+    "Name": "[번역기 마스터]",
+    "Description": "일본어 가사 번역과 언어 학습의 길을 걷는 자",
+    "Price": 2500,
+    "Condition": "Buyable"
+  },
+  "BaguetteLover": {
+    "Name": "[바게트 장인]",
+    "Description": "테토가 세상에서 가장 사랑하는 바게트의 매력을 아는 자",
+    "Price": 5000,
+    "Condition": "Buyable"
+  },
+  "QuizWinner": {
+    "Name": "[보카로 퀴즈왕]",
+    "Description": "곡 제목만 들어도 전주가 들리는 보카로 덕후",
+    "Price": 8000,
+    "Condition": "Buyable"
+  },
+  "Scouter": {
+    "Name": "[프로듀서]",
+    "Description": "스카우트로 수많은 보카로/UTAU 캐릭터를 모은 수집가",
+    "Price": 12000,
+    "Condition": "Buyable"
+  },
+  "TetoFanatic": {
+    "Name": "[키메라의 신도]",
+    "Description": "4월 1일의 기적! 카사네 테토를 진심으로 애정하는 자",
+    "Price": 16041,
+    "Condition": "Buyable"
+  },
+  "Gambler": {
+    "Name": "[승부사]",
+    "Description": "인생도 도박도 한 방이지! 슬롯과 룰렛을 즐기는 자",
+    "Price": 20000,
+    "Condition": "Buyable"
+  },
+  "RichMan": {
+    "Name": "[영주]",
+    "Description": "포인트 소모 없이 출석체크에 성공한 진짜 부자",
+    "Price": 30000,
+    "Condition": "Buyable"
+  },
+  "MikuLover": {
+    "Name": "[파를 든 자]",
+    "Description": "하츠네 미쿠의 영원한 팬이자 수호자",
+    "Price": 39831,
+    "Condition": "Buyable"
+  },
+  "ToriMaster": {
+    "Name": "[토리의 동반자]",
+    "Description": "'토리' 봇의 뿌리와 함께하는 최고 명예",
+    "Price": 50000,
+    "Condition": "Buyable"
+  },
+  "BaitLover": {
+    "Name": "[가챠 중독자]",
+    "Description": "500P 가챠를 연타하다 통장이 거덜 난 자",
+    "Price": 1500,
+    "Condition": "Buyable"
+  },
+  "NightOwl": {
+    "Name": "[올빼미족]",
+    "Description": "심야 시간에 토리를 찾아오는 어둠의 자식들",
+    "Price": 2000,
+    "Condition": "Buyable"
+  },
+  "ZundamonFan": {
+    "Name": "[즌다 떡 장인]",
+    "Description": "즌다몬을 최애로 모시는 부지런한 스카우터",
+    "Price": 3000,
+    "Condition": "Buyable"
+  },
+  "DiceRoller": {
+    "Name": "[주사위의 신]",
+    "Description": "홀짝 예측으로 인생 역전을 꿈꾸는 자",
+    "Price": 4000,
+    "Condition": "Buyable"
+  },
+  "QuizMaster": {
+    "Name": "[150곡 암기왕]",
+    "Description": "보카로 퀴즈 150문제를 완벽히 꿰뚫고 있는 자",
+    "Price": 6000,
+    "Condition": "Buyable"
+  },
+  "BaguetteKing": {
+    "Name": "[프랑스 베이커리 회장]",
+    "Description": "테토에게 평생 먹을 바게트를 조공한 대부호",
+    "Price": 7500,
+    "Condition": "Buyable"
+  },
+  "MikuFirat": {
+    "Name": "[전자 해적]",
+    "Description": "하츠네 미쿠의 모든 앨범을 수집한 백전백승 음악가",
+    "Price": 9000,
+    "Condition": "Buyable"
+  },
+  "VocaloidHistorian": {
+    "Name": "[보카로 고고학자]",
+    "Description": "2007년 초기 명곡부터 최신 신곡까지 완벽 통달",
+    "Price": 10000,
+    "Condition": "Buyable"
+  },
+  "RinLenFan": {
+    "Name": "[노란 리본의 수호자]",
+    "Description": "카가미네 린&렌의 듀엣 곡에 영혼을 바친 자",
+    "Price": 11000,
+    "Condition": "Buyable"
+  },
+  "LukaLover": {
+    "Name": "[여왕의 기사단]",
+    "Description": "메구리네 루카의 성숙한 멜로디에 빠진 자",
+    "Price": 12500,
+    "Condition": "Buyable"
+  },
+  "KaitoFan": {
+    "Name": "[아이스크림 중독자]",
+    "Description": "카이토를 위해 냉장고를 가득 채운 열정가",
+    "Price": 13500,
+    "Condition": "Buyable"
+  },
+  "MeikoFan": {
+    "Name": "[붉은 주신]",
+    "Description": "메이코의 시원한 고음에 매료된 보카로 팬",
+    "Price": 14500,
+    "Condition": "Buyable"
+  },
+  "GumiLover": {
+    "Name": "[당근밭 파수꾼]",
+    "Description": "GUMI의 독보적인 음색을 사랑하는 자",
+    "Price": 15500,
+    "Condition": "Buyable"
+  },
+  "IaFan": {
+    "Name": "[투명한 고음의 전사]",
+    "Description": "IA의 빠른 록 사운드에 전율을 느끼는 자",
+    "Price": 17000,
+    "Condition": "Buyable"
+  },
+  "GachaUnlucky": {
+    "Name": "[꽝 전문가]",
+    "Description": "일반 등급만 100번 연속으로 뽑은 불운의 아이콘",
+    "Price": 18000,
+    "Condition": "Buyable"
+  },
+  "GachaLegend": {
+    "Name": "[2%의 기적]",
+    "Description": "극악의 전설 등급 캐릭터 영입에 성공한 운명론자",
+    "Price": 22000,
+    "Condition": "Buyable"
+  },
+  "RouletteKing": {
+    "Name": "[1% 잭팟의 주인공]",
+    "Description": "1000선택 룰렛에서 5배 대박을 터뜨린 자",
+    "Price": 25000,
+    "Condition": "Buyable"
+  },
+  "AttendanceGod": {
+    "Name": "[출석의 개척자]",
+    "Description": "비가 오나 눈이 오나 출석체크를 잊지 않는 유저",
+    "Price": 28000,
+    "Condition": "Buyable"
+  },
+  "CasinoRoyale": {
+    "Name": "[카지노 VIP]",
+    "Description": "도박으로 포인트를 모으고 도박으로 탕진하는 자",
+    "Price": 32000,
+    "Condition": "Buyable"
+  },
+  "DecoFan": {
+    "Name": "[뱀파이어의 후예]",
+    "Description": "DECO*27의 모든 대표곡 가사를 외우고 있는 자",
+    "Price": 35000,
+    "Condition": "Buyable"
+  },
+  "PinocchioFan": {
+    "Name": "[인간은 누구나 팬클럽]",
+    "Description": "피노키오피의 풍자적이고 우화적인 명곡을 사랑하는 자",
+    "Price": 37000,
+    "Condition": "Buyable"
+  },
+  "NeruFan": {
+    "Name": "[질풍노도의 학생]",
+    "Description": "Neru의 격정적인 교복 록에 영혼을 빼앗긴 자",
+    "Price": 40000,
+    "Condition": "Buyable"
+  },
+  "KemuFan": {
+    "Name": "[육조 년의 방랑자]",
+    "Description": "kemu의 폭풍 같은 스피드 록을 견뎌낸 자",
+    "Price": 42000,
+    "Condition": "Buyable"
+  },
+  "MaretuFan": {
+    "Name": "[매운맛 비트 중독자]",
+    "Description": "MARETU 특유의 기괴하고 어두운 감성에 매료된 자",
+    "Price": 45000,
+    "Condition": "Buyable"
+  },
+  "SupercellFan": {
+    "Name": "[멜트의 추억]",
+    "Description": "보컬로이드의 전성기를 이끈 슈퍼셀의 명곡을 기리는 자",
+    "Price": 48000,
+    "Condition": "Buyable"
+  },
+  "Millionaire": {
+    "Name": "[재벌 3세]",
+    "Description": "통장에 6자리 수 포인트를 쌓아둔 절대 권력자",
+    "Price": 60000,
+    "Condition": "Buyable"
+  },
+  "Billionaire": {
+    "Name": "[만수르]",
+    "Description": "상점의 모든 칭호를 싹쓸이할 수 있는 백만장자",
+    "Price": 77777,
+    "Condition": "Buyable"
+  },
+  "RedMikuMaster": {
+    "Name": "[빨간 미쿠는 아니라고]",
+    "Description": "테토를 미쿠라고 부르는 자들에게 분노를 분출하는 신도",
+    "Price": 80000,
+    "Condition": "Buyable"
+  },
+  "TetorisMaster": {
+    "Name": "[테토리스 챔피언]",
+    "Description": "테테테 테토테토 가사를 1초 만에 읊을 수 있는 자",
+    "Price": 85000,
+    "Condition": "Buyable"
+  },
+  "MesmerizerMaster": {
+    "Name": "[최면 술사]",
+    "Description": "메스머라이저 최면에 걸려 밤새 노래를 부르는 자",
+    "Price": 90000,
+    "Condition": "Buyable"
+  },
+  "ServerHistoryGod": {
+    "Name": "[역사관 관장]",
+    "Description": "서버 타임라인의 첫 페이지부터 함께한 산증인",
+    "Price": 95000,
+    "Condition": "Buyable"
+  },
+  "BotDevHelper": {
+    "Name": "[디버깅 의사]",
+    "Description": "토리의 서버 오류와 Docker 환경을 함께 고쳐준 수호자",
+    "Price": 100000,
+    "Condition": "Buyable"
+  },
+  "VocaloidGod": {
+    "Name": "[보컬로이드 마스터]",
+    "Description": "모든 보카로/UTAU/SynV 세계관을 통달한 신",
+    "Price": 120000,
+    "Condition": "Buyable"
+  },
+  "ChimeraOverlord": {
+    "Name": "[키메라의 지배자]",
+    "Description": "31세 15.95m 테토의 진정한 힘을 끌어내는 자",
+    "Price": 150000,
+    "Condition": "Buyable"
+  },
+  "ToriAbsolute": {
+    "Name": "[토리의 절대적 존재]",
+    "Description": "토리 서버에서 도달할 수 있는 극의의 경지",
+    "Price": 200000,
+    "Condition": "Buyable"
+  },
+  "BaguetteGod": {
+    "Name": "[천상의 바게트 신]",
+    "Description": "바게트 한 개로 전 세계를 구한 수호신",
+    "Price": 250000,
+    "Condition": "Buyable"
+  },
+  "InfinitePoints": {
+    "Name": "[포인트 무한 동력]",
+    "Description": "포인트가 너무 많아서 쓸 곳을 찾지 못하는 자",
+    "Price": 300000,
+    "Condition": "Buyable"
+  },
+  "LegendaryScouter": {
+    "Name": "[전설의 마스터 프로듀서]",
+    "Description": "스카우트 도감을 100% 올클리어한 자",
+    "Price": 400000,
+    "Condition": "Buyable"
+  },
+  "ToriEmperor": {
+    "Name": "[토리 제국의 황제]",
+    "Description": "토리 서버 칭호의 최종 끝판왕 (마지막 수집품)",
+    "Price": 500000,
+    "Condition": "Buyable"
+  }
+}

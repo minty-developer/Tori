@@ -7,10 +7,6 @@ using Microsoft.Extensions.Logging;
 using System.Reflection;
 
 // 봇의 기동/로그인, 슬래시 커맨드 등록, 기본 텍스트 명령어("!토리")를 담당하는 핵심 호스팅 서비스.
-//
-// 🔧 정리: 일본어 자동 번역 로직(IsJapanese/TranslateToKoreanAsync)이 이 클래스와 TranslationService.cs에
-//    중복으로 있었다. 번역 기능은 TranslationService 하나로 통일했고, 이 서비스는 생성자에서
-//    TranslationService를 주입받아 DI가 그 인스턴스를 계속 살려두도록만 한다(=이벤트 구독 유지).
 public class DiscordBotService : IHostedService
 {
     private readonly DiscordSocketClient _client;
@@ -48,8 +44,9 @@ public class DiscordBotService : IHostedService
         // 2. "온라인 상태" 색상 표시 (Online, Idle, DoNotDisturb, Invisible 등)
         await _client.SetStatusAsync(UserStatus.Online);
 
-    var token = Environment.GetEnvironmentVariable("DISCORD_TOKEN");
-        if (string.IsNullOrEmpty(token))
+    var token = _config["DISCORD_TOKEN"]
+                    ?? Environment.GetEnvironmentVariable("DISCORD_TOKEN");
+    if (string.IsNullOrEmpty(token))
         {
             _logger.LogCritical("DiscordToken이 설정되지 않았습니다! 환경 변수 또는 설정 파일을 확인해주세요.");
             throw new Exception("DiscordToken이 설정되지 않았습니다!");
@@ -92,7 +89,15 @@ public class DiscordBotService : IHostedService
     private async Task ReadyAsync()
     {
         _logger.LogInformation("{BotName} 봇이 준비되었습니다!", _client.CurrentUser.Username);
+
+        foreach (var guild in _client.Guilds)
+        {
+            await guild.DeleteApplicationCommandsAsync();
+        }
+
         await _interaction.RegisterCommandsGloballyAsync();
+
+        _logger.LogInformation("길드 커맨드 청소 완료 및 전역 커맨드 등록이 완료되었습니다.");
     }
 
     private async Task MessageReceivedAsync(SocketMessage message)

@@ -6,3 +6,4 @@
 appsettings.json
 appsettings.Development.json
 .env
+mysql_data/

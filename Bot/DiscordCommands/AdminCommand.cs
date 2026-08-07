@@ -1,7 +1,7 @@
 using Discord.Interactions;
 using Discord.WebSocket;
 using Discord;
-using Microsoft.Data.Sqlite;
+using MySqlConnector;
 using Microsoft.Extensions.Logging;
 using model;
 
@@ -28,7 +28,6 @@ public class AnnounceModal : IModal
 // 서버 관리자 전용 명령어 모음 (공지, 역할관리, 돈관리, 투표)
 public class AdminCommands : InteractionModuleBase<SocketInteractionContext>
 {
-    // 봇 전체 공통 에러 응답 문구. 반복되던 문자열을 상수 하나로 정리했다.
     private const string GenericErrorMessage = "봇 에러가 났습니다. \n *점검:*\n- 관리자 DM";
 
     private readonly DatabaseService _dbService;
@@ -44,11 +43,9 @@ public class AdminCommands : InteractionModuleBase<SocketInteractionContext>
 
     /// <summary>
     /// 이미 응답했으면 FollowupAsync, 아직이면 RespondAsync로 안전하게 에러 메시지를 보낸다.
-    /// 모든 명령어의 catch 블록에서 중복되던 로직을 하나로 모았다.
     /// </summary>
     private async Task RespondErrorAsync(string commandName, Exception ex, string userMessage = GenericErrorMessage)
     {
-        // 콘솔 + ILogger 이중 기록: 콘솔은 즉시 확인용, ILogger는 호스팅 환경(파일/모니터링 등)과 연동하기 위함.
         Console.WriteLine($"[{commandName} Error] {ex.Message}");
         _logger.LogError(ex, "[{CommandName}] 명령어 처리 중 오류 발생", commandName);
 
@@ -121,7 +118,6 @@ public class AdminCommands : InteractionModuleBase<SocketInteractionContext>
 
             await channel.SendMessageAsync(formattedMessage);
             
-            // 💡 이미 Defer 되었으므로 RespondAsync가 아닌 FollowupAsync를 사용합니다.
             await FollowupAsync($"✅ {channel.Mention} 채널에 공지를 전송했어!", ephemeral: true);
 
             _logger.LogInformation("{User}님이 {Channel} 채널에 공지를 전송했습니다. 제목: {Title}", Context.User.Username, channel.Name, modal.TitleInput);
@@ -133,27 +129,48 @@ public class AdminCommands : InteractionModuleBase<SocketInteractionContext>
         }
     }
 
-    [SlashCommand("명령어등록", "현재 서버에 슬래시 명령어를 수동으로 강제 등록합니다.")]
-    public async Task ManualRegisterAsync()
+    [SlashCommand("명령어등록", "슬래시 명령어를 갱신하거나 중복 커맨드를 청소합니다.")]
+    public async Task ManualRegisterAsync(
+        [Summary(description: "작업 선택 (기본값: 전역 갱신 및 청소)")]
+        [Choice("전역 갱신 + 길드 중복 청소 (추천)", "global_clean")]
+        [Choice("현재 길드 커맨드 전체 삭제 (초기화)", "clean_only")]
+        [Choice("현재 길드 전용으로만 재등록", "guild_only")]
+        string mode = "global_clean")
     {
-        // 등록 작업이 살짝 걸릴 수 있으므로 응답 대기 상태(Thinking)로 먼저 띄움
         await DeferAsync(ephemeral: true);
 
         try
         {
-            // 1. 현재 서버(Guild)에 즉시 등록 (테스트용으로 가장 추천!)
-            await _interactionService.RegisterCommandsToGuildAsync(Context.Guild.Id);
+            if (mode == "global_clean")
+            {
+                // 1. 현재 서버의 길드 전용 커맨드(중복 원인)를 전부 싹 지움
+                await Context.Guild.DeleteApplicationCommandsAsync();
 
-            // 2. 만약 봇이 들어간 모든 곳(전역)에 등록하고 싶다면 아래 코드를 사용 (반영까지 최대 1시간 소요)
-            // await _interactionService.RegisterCommandsGloballyAsync();
+                // 2. 전역(Global) 커맨드를 다시 갱신 등록
+                await _interactionService.RegisterCommandsGloballyAsync();
 
-            await FollowupAsync("✅ 슬래시 명령어가 이 서버에 성공적으로 수동 등록되었습니다!", ephemeral: true);
+                await FollowupAsync("✅ 길드 중복 커맨드를 삭제하고 **전역 슬래시 명령어**를 성공적으로 갱신했어!\n*(디스코드 `Ctrl + R`로 새로고침해봐!)*", ephemeral: true);
+            }
+            else if (mode == "clean_only")
+            {
+                // 현재 서버에 묶인 커맨드만 싹 청소
+                await Context.Guild.DeleteApplicationCommandsAsync();
+                await FollowupAsync("🧹 현재 서버에 등록된 길드 전용 명령어를 모두 청소했어!", ephemeral: true);
+            }
+            else if (mode == "guild_only")
+            {
+                // 테스트용: 현재 서버에만 즉시 반응하는 길드 커맨드로 강제 등록
+                await _interactionService.RegisterCommandsToGuildAsync(Context.Guild.Id);
+                await FollowupAsync("⚡ 현재 서버 전용(Guild)으로 슬래시 명령어를 수동 등록했어! (전역 커맨드와 중복될 수 있음)", ephemeral: true);
+            }
+
+            _logger.LogInformation("{User}님이 '명령어등록' (모드: {Mode})을 실행했습니다.", Context.User.Username, mode);
         }
         catch (Exception ex)
         {
             await FollowupAsync($"❌ 등록 중 오류가 발생했습니다: `{ex.Message}`", ephemeral: true);
         }
-    }   
+    }
 
     [SlashCommand("공지", "모달 팝업 창을 띄워 편하게 서버 공지를 작성합니다.")]
     public async Task AnnounceModalCommand()
@@ -162,13 +179,13 @@ public class AdminCommands : InteractionModuleBase<SocketInteractionContext>
         {
             _logger.LogInformation("{User}님이 '공지' 명령어로 공지-봇 채널에 공지 모달을 요청했습니다.", Context.User.Username);
 
-            long channelId = BotEnv.isDev?1479322191148613686:1529006865260740729;
-            // 커스텀 ID에 채널 ID를 숨겨서 전달합니다. (모달 제출 시 어느 채널로 보낼지 복원하기 위함)
+            long channelId = BotEnv.isDev ? 1479322191148613686 : 1529006865260740729;
+            
+            // AnnounceModal을 직접 넘기는 대신 RespondWithModalAsync 내장 래퍼 형식에 맞춰 호출
             await Context.Interaction.RespondWithModalAsync<AnnounceModal>($"announce_modal_{channelId}");
         }
         catch (Exception ex)
         {
-            // 💡 발생 상황: 모달 팝업 창을 띄우는 과정에서 디스코드 통신이 끊겼을 때
             await RespondErrorAsync("공지 모달", ex);
         }
     }
@@ -210,7 +227,6 @@ public class AdminCommands : InteractionModuleBase<SocketInteractionContext>
         }
         catch (Exception ex)
         {
-            // 💡 발생 상황: 봇의 역할이 부여하려는 역할보다 아래에 있거나 '역할 관리' 권한이 없을 때
             await RespondErrorAsync("역할관리", ex);
         }
     }
@@ -238,7 +254,7 @@ public class AdminCommands : InteractionModuleBase<SocketInteractionContext>
 
             // 1) 현재 보유 포인트 조회 (신규 유저면 0으로 시작)
             const string selectQuery = "SELECT Points FROM Users WHERE UserId = @UserId";
-            using (var selectCmd = new SqliteCommand(selectQuery, db))
+            using (var selectCmd = new MySqlCommand(selectQuery, db))
             {
                 selectCmd.Parameters.AddWithValue("@UserId", userId);
 
@@ -258,23 +274,15 @@ public class AdminCommands : InteractionModuleBase<SocketInteractionContext>
                 _ => currentPoints
             };
 
-            // 3) 신규 유저면 INSERT, 기존 유저면 UPDATE
-            if (isNewUser)
-            {
-                const string insertQuery = "INSERT INTO Users (UserId, Points, LastCheckIn) VALUES (@UserId, @Points, 'None')";
-                using var insertCmd = new SqliteCommand(insertQuery, db);
-                insertCmd.Parameters.AddWithValue("@UserId", userId);
-                insertCmd.Parameters.AddWithValue("@Points", finalPoints);
-                insertCmd.ExecuteNonQuery();
-            }
-            else
-            {
-                const string updateQuery = "UPDATE Users SET Points = @Points WHERE UserId = @UserId";
-                using var updateCmd = new SqliteCommand(updateQuery, db);
-                updateCmd.Parameters.AddWithValue("@Points", finalPoints);
-                updateCmd.Parameters.AddWithValue("@UserId", userId);
-                updateCmd.ExecuteNonQuery();
-            }
+            const string upsertQuery = @"
+                INSERT INTO Users (UserId, Points, LastCheckIn) 
+                VALUES (@UserId, @FinalPoints, 'None')
+                ON DUPLICATE KEY UPDATE Points = @FinalPoints;";
+
+            using var cmd = new MySqlCommand(upsertQuery, db);
+            cmd.Parameters.AddWithValue("@UserId", userId);
+            cmd.Parameters.AddWithValue("@FinalPoints", finalPoints);
+            cmd.ExecuteNonQuery();
 
             string actionText = action == "add" ? "지급" : (action == "remove" ? "차감" : "설정");
             await RespondAsync($"💸 **{targetUser.Username}**님의 포인트를 조정했어!\n> 작업: **{amount:N0} P {actionText}**\n> 현재 잔액: **{finalPoints:N0} P**");
@@ -285,7 +293,6 @@ public class AdminCommands : InteractionModuleBase<SocketInteractionContext>
         }
         catch (Exception ex)
         {
-            // 💡 발생 상황: DB 접속 실패 또는 SQL 쿼리 실행 에러
             await RespondErrorAsync("돈관리", ex);
         }
     }
@@ -336,7 +343,6 @@ public class AdminCommands : InteractionModuleBase<SocketInteractionContext>
         }
         catch (Exception ex)
         {
-            // 💡 발생 상황: 봇이 채널에 메시지 전송 권한이나 리액션 추가 권한이 없을 때
             await RespondErrorAsync("투표", ex);
         }
     }

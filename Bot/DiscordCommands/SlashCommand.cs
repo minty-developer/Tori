@@ -1,7 +1,7 @@
 using Discord.Interactions;
 using Discord.WebSocket;
 using Discord;
-using Microsoft.Data.Sqlite;
+using MySqlConnector;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -22,30 +22,34 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
     }
 
     // 낚시로 등장 가능한 캐릭터 후보 목록.
+    // 낚시로 등장 가능한 캐릭터 후보 목록 (밸런스 패치 적용)
     private static readonly List<(string Name, string Grade, long Price)> FishingCharacterPool = new()
     {
-        ("즌다몬", "일반", 100),
-        ("카이토", "일반", 100),
-        ("유키", "일반", 120),
-        ("카후", "일반", 120),
-        ("우이", "일반", 150),
-        ("유카", "일반", 150),
-        ("린", "일반", 200),
-        ("렌", "일반", 200),
-        ("네루", "일반", 250),
-        ("레이", "일반", 250),
+        // 일반 등급 (지원금 50~150 P) -> 미끼값(500P) 대비 손해
+        ("즌다몬", "일반", 50),
+        ("카이토", "일반", 50),
+        ("유키", "일반", 70),
+        ("카후", "일반", 70),
+        ("우이", "일반", 100),
+        ("유카", "일반", 100),
+        ("린", "일반", 120),
+        ("렌", "일반", 120),
+        ("네루", "일반", 150),
+        ("레이", "일반", 150),
 
-        ("테토 (한국어)", "희귀", 500),
-        ("미쿠 (한국어)", "희귀", 600),
-        ("테토 (영어)", "희귀", 700),
-        ("미쿠 (영어)", "희귀", 800),
+        // 희귀 등급 (지원금 300~500 P) -> 거의 본전~소폭 손해
+        ("테토 (한국어)", "희귀", 300),
+        ("미쿠 (한국어)", "희귀", 350),
+        ("테토 (영어)", "희귀", 400),
+        ("미쿠 (영어)", "희귀", 500),
 
-        ("테토 (일본어)", "전설", 1500),
-        ("미쿠 (일본어)", "전설", 2000),
-        ("작곡 (전설의 마스터)", "전설", 3000)
+        // 전설 등급 (지원금 1000~2000 P) -> 잭팟 (2% 확률)
+        ("테토 (일본어)", "전설", 1000),
+        ("미쿠 (일본어)", "전설", 1500),
+        ("작곡 (전설의 마스터)", "전설", 2000)
     };
 
-    // 유저에 행동에 대한 테토의 반응
+    // 유저 행동에 대한 테토의 반응
     public Dictionary<string, string> ActionofMove = new Dictionary<string, string>() {
         { "인사", "안녕~!" },
         { "쓰다듬기", "아..앗 뭐하는 거야! 머리 헝클어지잖아..."},
@@ -70,7 +74,6 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
     [SlashCommand("명령어", "토리가 할 수 있는 일은~!")]
     public async Task ListCommandsAsync()
     {
-        // InteractionService에 등록된 모든 슬래시 명령어 가져오기
         var slashCommands = _interactionService.SlashCommands;
 
         var description = string.Join("\n", slashCommands.Select(cmd => $"`/{cmd.Name}` : {cmd.Description}"));
@@ -78,10 +81,9 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
         var embed = new EmbedBuilder()
             .WithTitle("✨ 토리의 명령어 목록")
             .WithDescription(string.IsNullOrEmpty(description) ? "등록된 명령어가 없습니다." : description)
-            .WithColor(Color.Parse("FF0033")) // 테토 시그니처 컬러 느낌!
+            .WithColor(Color.Parse("FF0033")) // 테토 시그니처 컬러
             .Build();
 
-        // ephemeral: true를 주면 이 명령어를 쓴 사람 눈에만 몰래 보임
         await RespondAsync(embed: embed, ephemeral: true);
     }
 
@@ -94,7 +96,6 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
         }
         catch (Exception ex)
         {
-            // 💡 발생 상황: 인터넷 연결이 끊겼거나 디스코드 서버 자체가 아파서 봇의 응답이 3초를 넘겨버렸을 때 (Timeout)
             await RespondErrorAsync("토리", ex, "토리가 힘든 일을 열심히 하고 있습니다! \n*인터넷 연결이 끊겼거나 디스코드 서버에 문제가 있습니다!*\n*점검:*\n- 인터넷 연결\n- 관리자 DM");
         }
     }
@@ -108,7 +109,6 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
         }
         catch (Exception ex)
         {
-            // 💡 발생 상황: 단순 텍스트 명령어라 거의 안 나지만, 디스코드 API 장애 시 발생 가능
             await RespondErrorAsync("안녕", ex, "토리가 아직 말을 못 들었습니다!\n*인터넷 연결이 끊겼거나 디스코드 서버에 문제가 있습니다!*\n*점검:*\n- 인터넷 연결\n- 관리자 DM");
         }
     }
@@ -124,9 +124,8 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
             using var db = _dbService.GetConnection();
             db.Open();
 
-            // 1) 유저의 현재 포인트/마지막 출석일 조회
             string selectQuery = "SELECT Points, LastCheckIn FROM Users WHERE UserId = @UserId";
-            using var selectCmd = new SqliteCommand(selectQuery, db);
+            using var selectCmd = new MySqlCommand(selectQuery, db);
             selectCmd.Parameters.AddWithValue("@UserId", userId);
 
             using var reader = selectCmd.ExecuteReader();
@@ -142,10 +141,9 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
                     return;
                 }
 
-                // SQLite는 reader가 열려 있는 동안 같은 커넥션으로 새 커맨드를 실행할 수 없으므로 먼저 닫는다.
                 reader.Close();
                 string updateQuery = "UPDATE Users SET Points = Points + 100, LastCheckIn = @Today WHERE UserId = @UserId";
-                using var updateCmd = new SqliteCommand(updateQuery, db);
+                using var updateCmd = new MySqlCommand(updateQuery, db);
                 updateCmd.Parameters.AddWithValue("@Today", today);
                 updateCmd.Parameters.AddWithValue("@UserId", userId);
                 updateCmd.ExecuteNonQuery();
@@ -154,10 +152,9 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
             }
             else
             {
-                // 2) 신규 유저면 100포인트로 새로 등록
                 reader.Close();
                 string insertQuery = "INSERT INTO Users (UserId, Points, LastCheckIn) VALUES (@UserId, 100, @Today)";
-                using var insertCmd = new SqliteCommand(insertQuery, db);
+                using var insertCmd = new MySqlCommand(insertQuery, db);
                 insertCmd.Parameters.AddWithValue("@UserId", userId);
                 insertCmd.Parameters.AddWithValue("@Today", today);
                 insertCmd.ExecuteNonQuery();
@@ -169,8 +166,7 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
         }
         catch (Exception ex)
         {
-            // 💡 발생 상황: DB 파일(ToriDatabase.sqlite)이 열려있어서 락(Lock)이 걸렸거나, Users 테이블이 아직 생성 안 됐을 때 뻗음!
-            await RespondErrorAsync("출첵", ex, "토리의 메모장이 사라졌습니다!\n*DB파일에 문제가 있을 수 있습니다.*\n*점검:*\n- 관리자 DM");
+            await RespondErrorAsync("출첵", ex, "토리의 메모장이 사라졌습니다!\n*DB 연동에 문제가 있을 수 있습니다.*\n*점검:*\n- 관리자 DM");
         }
     }
 
@@ -193,14 +189,14 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
             db.Open();
 
             string query = "SELECT Points FROM Users WHERE UserId = @UserId";
-            using var cmd = new SqliteCommand(query, db);
+            using var cmd = new MySqlCommand(query, db);
             cmd.Parameters.AddWithValue("@UserId", userId);
 
             var result = cmd.ExecuteScalar();
 
             if (result != null)
             {
-                long points = (long)result;
+                long points = Convert.ToInt64(result);
                 
                 if (user.Id == Context.User.Id)
                 {
@@ -225,7 +221,6 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
         }
         catch (Exception ex)
         {
-            // 💡 발생 상황: DB에서 데이터를 읽어오다가 실패했을 때 (테이블 없음, DB 파일 손상 등)
             await RespondErrorAsync("포인트", ex, "토리의 메모장이 찢어져있습니다 ㅠㅠ\n*DB에서 데이터를 읽어오다가 실패했습니다.*");
         }
     }
@@ -239,7 +234,6 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
         }
         catch (Exception ex)
         {
-            // 💡 발생 상황: 명령어 응답이 디스코드 서버로 가는 도중 네트워크가 끊길 때
             await RespondErrorAsync("빨간미쿠", ex, "토리가 아직 말을 못 들었습니다!\n*인터넷 연결이 끊겼거나 디스코드 서버에 문제가 있습니다!*\n*점검:*\n- 인터넷 연결\n- 관리자 DM");
         }
     }
@@ -253,7 +247,6 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
         }
         catch (Exception ex)
         {
-            // 💡 발생 상황: 디스코드 API 장애 (드물게 발생)
             await RespondErrorAsync("테토리스", ex, "토리가 아직 말을 못 들었습니다!\n*인터넷 연결이 끊겼거나 디스코드 서버에 문제가 있습니다!*\n*점검:*\n- 인터넷 연결\n- 관리자 DM");
         }
     }
@@ -267,7 +260,6 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
         }
         catch (Exception ex)
         {
-            // 💡 발생 상황: 디스코드 API 장애 (드물게 발생)
             await RespondErrorAsync("메스머라이저", ex, "토리가 아직 말을 못 들었습니다!\n*인터넷 연결이 끊겼거나 디스코드 서버에 문제가 있습니다!*\n*점검:*\n- 인터넷 연결\n- 관리자 DM");
         }
     }
@@ -304,7 +296,6 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
         }
         catch (Exception ex)
         {
-            // 💡 발생 상황: timeline.json 파일 내용에 쉼표(,)를 빼먹는 등 JSON 형식이 박살 났을 때! (역직렬화 실패)
             await RespondErrorAsync("타임라인", ex, "역사관 보물들이 서로 섞여버렸습니다!\n*타임라인을 저장하는 JSON 파싱에 실패했습니다.*\n*점검:*\n- 관리자 DM");
         }
     }
@@ -327,10 +318,8 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
             using var db = _dbService.GetConnection();
             db.Open();
 
-            // 🔧 버그 수정: 기존에는 Points만 조회해서 칭호/출석 상태를 항상 "[뉴비]" / "오늘 완료!"로
-            //    하드코딩해서 보여주고 있었다. Titles, LastCheckIn까지 함께 읽어와 실제 값을 반영한다.
             string query = "SELECT Points, Titles, LastCheckIn FROM Users WHERE UserId = @UserId";
-            using var cmd = new SqliteCommand(query, db);
+            using var cmd = new MySqlCommand(query, db);
             cmd.Parameters.AddWithValue("@UserId", userId);
 
             using var reader = cmd.ExecuteReader();
@@ -353,7 +342,6 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
             string lastCheckIn = reader.IsDBNull(2) ? "" : reader.GetString(2);
             reader.Close();
 
-            // 장착 중인 칭호 키를 실제 이름으로 변환 (titles.json 참고, 못 찾으면 기본 뉴비 표기)
             string equippedTitleKey = string.IsNullOrEmpty(titlesJson)
                 ? "Newbie"
                 : (JsonSerializer.Deserialize<model.UserTitleData>(titlesJson)?.EquippedTitleKey ?? "Newbie");
@@ -391,7 +379,6 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
         }
         catch (Exception ex)
         {
-            // 💡 발생 상황: DB 조회 실패 또는 디스코드 유저의 프로필 사진(AvatarUrl)을 가져오다가 통신망이 끊겼을 때
             await RespondErrorAsync("프로필", ex, "토리가 아직 말을 못 들었습니다!\n*인터넷 연결이 끊겼거나 메모장에 문제가 있습니다!*\n*점검:*\n- 인터넷 연결\n- 관리자 DM");
         }
     }
@@ -441,7 +428,6 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
         }
         catch (Exception ex)
         {
-            // 💡 발생 상황: titles.json 안에 괄호 }를 안 닫았거나 문법을 틀려서 JSON 변환기가 못 읽고 터졌을 때!
             await RespondErrorAsync("상점", ex, "메모장이 고장났습니다\n*칭호를 저장하는 JSON 파싱에 실패했습니다.*\n*점검:*\n- 관리자 DM");
         }
     }
@@ -451,9 +437,6 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
     {
         try
         {
-            // 🔧 버그 수정: 기존 코드는 RespondAsync/DeferAsync 없이 바로 FollowupAsync를 호출했다.
-            //    디스코드 인터랙션은 먼저 Defer/Respond로 "응답하겠다"고 알려야 FollowupAsync를 쓸 수 있는데,
-            //    이게 없어서 명령어를 쓸 때마다 예외가 나고 catch 블록의 안내 메시지만 보이는 상태였다.
             await DeferAsync(ephemeral: true);
 
             string path = "titles.json";
@@ -486,7 +469,7 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
             {
                 db.Open();
                 const string selectQuery = "SELECT Points, Titles FROM Users WHERE UserId = @UserId";
-                using var selectCmd = new SqliteCommand(selectQuery, db);
+                using var selectCmd = new MySqlCommand(selectQuery, db);
                 selectCmd.Parameters.AddWithValue("@UserId", userId);
 
                 using var reader = selectCmd.ExecuteReader();
@@ -524,7 +507,7 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
             {
                 db.Open();
                 const string updateQuery = "UPDATE Users SET Points = @Points, Titles = @Titles WHERE UserId = @UserId";
-                using var updateCmd = new SqliteCommand(updateQuery, db);
+                using var updateCmd = new MySqlCommand(updateQuery, db);
                 updateCmd.Parameters.AddWithValue("@Points", remainingPoints);
                 updateCmd.Parameters.AddWithValue("@Titles", updatedTitlesJson);
                 updateCmd.Parameters.AddWithValue("@UserId", userId);
@@ -537,7 +520,6 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
         }
         catch (Exception ex)
         {
-            // 💡 발생 상황: DB에 아직 'Titles' 컬럼을 추가 안 했거나(SQL 에러), JSON 파일 형식이 틀렸을 때!
             await RespondErrorAsync("칭호구매", ex, "상점이 어쩔 수 없이 잠시 쉬는 중입니다!\n*DB SQL 또는 JSON 파싱에 실패했습니다.*\n*점검:*\n- 관리자 DM");
         }
     }
@@ -553,7 +535,7 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
             db.Open();
 
             string selectQuery = "SELECT Titles FROM Users WHERE UserId = @UserId";
-            using var selectCmd = new SqliteCommand(selectQuery, db);
+            using var selectCmd = new MySqlCommand(selectQuery, db);
             selectCmd.Parameters.AddWithValue("@UserId", userId);
 
             var result = selectCmd.ExecuteScalar();
@@ -576,12 +558,11 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
             string updatedTitlesJson = JsonSerializer.Serialize(userTitles);
 
             string updateQuery = "UPDATE Users SET Titles = @Titles WHERE UserId = @UserId";
-            using var updateCmd = new SqliteCommand(updateQuery, db);
+            using var updateCmd = new MySqlCommand(updateQuery, db);
             updateCmd.Parameters.AddWithValue("@Titles", updatedTitlesJson);
             updateCmd.Parameters.AddWithValue("@UserId", userId);
             updateCmd.ExecuteNonQuery();
 
-            // 알림 메시지에 표시할 칭호의 실제 이름을 titles.json에서 조회 (없으면 키 그대로 표시)
             string path = "titles.json";
             string titleName = titleKey;
             if (File.Exists(path))
@@ -599,7 +580,6 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
         }
         catch (Exception ex)
         {
-            // 💡 발생 상황: 유저 DB에 저장된 칭호 JSON 데이터가 깨졌거나, DB에서 데이터를 수정할 수 없을 때
             await RespondErrorAsync("칭호장착", ex, "칭호에 적응하지 못 했습니다!\n*DB SQL에 실패했습니다.*\n*점검:*\n- 관리자 DM");
         }
     }
@@ -632,7 +612,7 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
             {
                 db.Open();
                 string selectQuery = "SELECT Points FROM Users WHERE UserId = @UserId";
-                using var selectCmd = new SqliteCommand(selectQuery, db);
+                using var selectCmd = new MySqlCommand(selectQuery, db);
                 selectCmd.Parameters.AddWithValue("@UserId", userId);
 
                 var result = selectCmd.ExecuteScalar();
@@ -655,7 +635,6 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
             EmbedBuilder embed = new EmbedBuilder();
             bool gameWasWin = false;
 
-            // 게임 종류별로 결과를 계산하고 DB에 반영한 뒤 결과 임베드를 구성한다.
             if (gameType == "오드이븐")
             {
                 if (arg != "홀" && arg != "짝")
@@ -683,7 +662,7 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
                 {
                     db.Open();
                     string updateQuery = "UPDATE Users SET Points = @Points WHERE UserId = @UserId";
-                    using var updateCmd = new SqliteCommand(updateQuery, db);
+                    using var updateCmd = new MySqlCommand(updateQuery, db);
                     updateCmd.Parameters.AddWithValue("@Points", finalPoints);
                     updateCmd.Parameters.AddWithValue("@UserId", userId);
                     updateCmd.ExecuteNonQuery();
@@ -703,7 +682,6 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
                 double multiplier = 0;
                 bool isWin = false;
 
-                // 확률대: 1~10(1%) → x5, 11~100(9%) → x2, 101~500(40%) → x1.25, 나머지(50%) → 꽝
                 if (roll >= 1 && roll <= 10)
                 {
                     multiplier = 5.0;
@@ -740,7 +718,7 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
                 {
                     db.Open();
                     string updateQuery = "UPDATE Users SET Points = @Points WHERE UserId = @UserId";
-                    using var updateCmd = new SqliteCommand(updateQuery, db);
+                    using var updateCmd = new MySqlCommand(updateQuery, db);
                     updateCmd.Parameters.AddWithValue("@Points", finalPoints);
                     updateCmd.Parameters.AddWithValue("@UserId", userId);
                     updateCmd.ExecuteNonQuery();
@@ -768,12 +746,53 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
         }
         catch (Exception ex)
         {
-            // 💡 발생 상황: 계산 도중 너무 큰 숫자가 나와서(오버플로우) 뻗거나, DB에 포인트 깎고 올리는 쿼리가 실패했을 때
             await RespondErrorAsync("도박", ex, "계산이 너무 어려워서 실수 했습니다!\n*DB SQL 파싱에 실패했습니다.*\n*점검:*\n- 관리자 DM");
         }
     }
 
-    [SlashCommand("보카로퀴즈", "JSON에 저장된 보카로 곡을 보고 주관식으로 제목을 맞혀봐! (정답 시 포인트 획득)")]
+    [SlashCommand("도박확률", "도박 나빠!")]
+    public async Task GamblePercentAsync(
+        [Summary(description: "도박 종류를 선택해줘")] 
+        [Choice("주사위 홀짝", "오드이븐")] 
+        [Choice("확률 룰렛 (하이리스크)", "룰렛")] 
+        string gameType)
+    {
+        try
+        {
+            var embed = new EmbedBuilder();
+
+            if (gameType == "오드이븐")
+            {
+                embed.WithTitle("🎲 [주사위 홀짝 확률 안내]")
+                     .WithDescription("주사위(1~6)를 굴려 '홀' 또는 '짝'을 맞히는 단순 명쾌한 게임입니다!")
+                     .WithColor(Color.Blue)
+                     .AddField("🎲 승리 확률", "`50%` (주사위 눈 1, 3, 5 = 홀 / 2, 4, 6 = 짝)", false)
+                     .AddField("💰 배율 보상", "승리 시 배팅금의 **2배** 획득", false)
+                     .WithFooter("단순하지만 방심은 금물!", Context.Client.CurrentUser.GetAvatarUrl())
+                     .WithCurrentTimestamp();
+            }
+            else if (gameType == "룰렛")
+            {
+                embed.WithTitle("🎯 [1000선택 룰렛 확률 안내]")
+                     .WithDescription("1부터 1000까지의 무작위 번호를 뽑아 등급별 당첨을 겨루는 하이리스크 게임입니다!")
+                     .WithColor(Color.Purple)
+                     .AddField("🌟 전설의 대박 (1%)", "• **당첨 번호**: `1 ~ 10`\n• **보상 배율**: 배팅금의 **5배**", false)
+                     .AddField("💰 대성공 (9%)", "• **당첨 번호**: `11 ~ 100`\n• **보상 배율**: 배팅금의 **2배**", false)
+                     .AddField("✨ 소소한 당첨 (40%)", "• **당첨 번호**: `101 ~ 500`\n• **보상 배율**: 배팅금의 **1.25배**", false)
+                     .AddField("💥 꽝 (50%)", "• **당첨 번호**: `501 ~ 1000`\n• **보상 배율**: **0배**", false)
+                     .WithFooter("과도한 도박은 포인트 탕진의 지름길!", Context.Client.CurrentUser.GetAvatarUrl())
+                     .WithCurrentTimestamp();
+            }
+
+            await RespondAsync(embed: embed.Build());
+        }
+        catch (Exception ex)
+        {
+            await RespondErrorAsync("도박확률", ex, "도박 확률 정보를 읽어오는 데 실패했습니다!");
+        }
+    }
+
+    [SlashCommand("보카로퀴즈", "보카로 곡을 보고 주관식으로 제목을 맞혀봐! (정답 시 포인트 획득)")]
     public async Task VocaloidQuizAsync()
     {
         System.Func<SocketMessage, Task>? handler = null;
@@ -796,9 +815,6 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
             }
 
             var randomQuiz = quizList[Random.Shared.Next(quizList.Count)];
-
-            // 채널 메시지를 감시하다가 정답이 오면 tcs를 완료시키는 핸들러.
-            // 퀴즈가 끝나면(정답/시간초과 어느 쪽이든) finally에서 반드시 구독 해제한다.
 
             var embed = new EmbedBuilder()
                 .WithTitle("🎵 [보카로 주관식 곡 맞히기 퀴즈!]")
@@ -837,20 +853,15 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
                 using (var db = _dbService.GetConnection())
                 {
                     db.Open();
-                    string updateQuery = "UPDATE Users SET Points = Points + @Reward WHERE UserId = @UserId";
-                    using var cmd = new SqliteCommand(updateQuery, db);
+                    // MySQL 전용 Upsert 구문 사용
+                    string query = @"
+                        INSERT INTO Users (UserId, Points, LastCheckIn) 
+                        VALUES (@UserId, @Reward, 'None')
+                        ON DUPLICATE KEY UPDATE Points = Points + @Reward;";
+                    using var cmd = new MySqlCommand(query, db);
                     cmd.Parameters.AddWithValue("@Reward", rewardPoints);
                     cmd.Parameters.AddWithValue("@UserId", winnerId);
-                    int affected = cmd.ExecuteNonQuery();
-
-                    if (affected == 0)
-                    {
-                        string insertQuery = "INSERT OR IGNORE INTO Users (UserId, Points, LastCheckIn) VALUES (@UserId, @Reward, 'None')";
-                        using var insertCmd = new SqliteCommand(insertQuery, db);
-                        insertCmd.Parameters.AddWithValue("@UserId", winnerId);
-                        insertCmd.Parameters.AddWithValue("@Reward", rewardPoints);
-                        insertCmd.ExecuteNonQuery();
-                    }
+                    cmd.ExecuteNonQuery();
                 }
 
                 await Context.Channel.SendMessageAsync($"🎉 정답이야! **{winningMsg.Author.Username}**님이 가장 먼저 맞혔어!\n🎁 보상으로 **+500 P** 획득! (정답: **{randomQuiz.Title}**) 데이터베이스에 적립 완료!");
@@ -864,7 +875,6 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
         }
         catch (Exception ex)
         {
-            // 💡 발생 상황: songs.json 문법(괄호 등)이 틀렸거나, 누군가 정답을 쳤는데 DB 업데이트 도중 락(Lock)이 걸렸을 때!
             await RespondErrorAsync("보카로퀴즈", ex, "문제 시스템에 오류를 찾아서 고치는 중입니다.\n*DB SQL 또는 문제를 저장하는 JSON 파싱에 실패했습니다.*\n*점검:*\n- 관리자 DM");
         }
         finally
@@ -876,51 +886,56 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
         }
     }
 
-    [SlashCommand("낚시", "100포인트를 미끼(?)로 보컬로이드 얻기!\n(워.....월척이닷~!)")]
-    public async Task FishingAsync()
+    [SlashCommand("가챠", "500포인트를 미끼로 보컬로이드 스카우트!\n(워.....월척이닷~!)")]
+    public async Task GachaAsync()
     {
-
         if (Context.Interaction.HasResponded) return;
         try
         {
             long userId = (long)Context.User.Id;
-            bool isCanBuy = false;
+            long baitPrice = 500; // 미끼 가격 500P로 인상
+
             using (var db = _dbService.GetConnection())
             {
                 db.Open();
 
+                // 1. 포인트 잔액 조회 및 검사
                 string checkQuery = "SELECT Points FROM Users WHERE UserId = @UserId";
-                using var checkCmd = new SqliteCommand(checkQuery, db);
+                using var checkCmd = new MySqlCommand(checkQuery, db);
                 checkCmd.Parameters.AddWithValue("@UserId", userId);
 
-                var existingCount = checkCmd.ExecuteScalar();
+                var existingPointsObj = checkCmd.ExecuteScalar();
 
-                if (existingCount != null && existingCount != DBNull.Value)
+                if (existingPointsObj == null || existingPointsObj == DBNull.Value)
                 {
-                    string pointQuery = "UPDATE Users SET Points = Points + @Price WHERE UserId = @UserId";
-                    using var pointCmd = new SqliteCommand(pointQuery, db);
-                    pointCmd.Parameters.AddWithValue("@Price", -100);
-                    pointCmd.Parameters.AddWithValue("@UserId", userId);
-                    pointCmd.ExecuteNonQuery();
-                    isCanBuy = true;
+                    await RespondAsync("아직 출석체크를 안 해서 포인트가 없어! `/출첵`부터 해봐.", ephemeral: true);
+                    return;
                 }
-                else
+
+                long currentPoints = Convert.ToInt64(existingPointsObj);
+                if (currentPoints < baitPrice)
                 {
-                    await RespondAsync("돈이 부족하다구!");
+                    await RespondAsync($"포인트가 부족해! 낚시를 하려면 최소 **{baitPrice:N0} P**가 필요해! (현재: {currentPoints:N0} P)", ephemeral: true);
+                    return;
                 }
+
+                // 2. 미끼값 500P 차감
+                string deductQuery = "UPDATE Users SET Points = Points - @BaitPrice WHERE UserId = @UserId";
+                using var deductCmd = new MySqlCommand(deductQuery, db);
+                deductCmd.Parameters.AddWithValue("@BaitPrice", baitPrice);
+                deductCmd.Parameters.AddWithValue("@UserId", userId);
+                deductCmd.ExecuteNonQuery();
             }
 
-            if(!isCanBuy) return;
-
-            // 등급 확률: 일반 60%, 희귀 30%, 전설 10%
-            int roll = Random.Shared.Next(1, 101);
+            // 3. 확률 뽑기 (80% / 18% / 2%)
+            int roll = Random.Shared.Next(1, 101); // 1~100
             var targetPool = FishingCharacterPool;
 
-            if (roll <= 60)
+            if (roll <= 80)        // 1~80 (80% 확률)
                 targetPool = FishingCharacterPool.FindAll(c => c.Grade == "일반");
-            else if (roll <= 90)
+            else if (roll <= 98)   // 81~98 (18% 확률)
                 targetPool = FishingCharacterPool.FindAll(c => c.Grade == "희귀");
-            else
+            else                   // 99~100 (2% 확률)
                 targetPool = FishingCharacterPool.FindAll(c => c.Grade == "전설");
 
             var caughtChar = targetPool[Random.Shared.Next(targetPool.Count)];
@@ -928,22 +943,23 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
             bool isNew = false;
             long totalCatchCount = 1;
 
+            // 4. 잡은 캐릭터 도감 및 지원금 지급 처리
             using (var db = _dbService.GetConnection())
             {
                 db.Open();
 
-                string checkQuery = "SELECT CatchCount FROM UserFishes WHERE UserId = @UserId AND FishName = @FishName";
-                using var checkCmd = new SqliteCommand(checkQuery, db);
-                checkCmd.Parameters.AddWithValue("@UserId", userId);
-                checkCmd.Parameters.AddWithValue("@FishName", caughtChar.Name);
+                string checkFishQuery = "SELECT CatchCount FROM UserFishes WHERE UserId = @UserId AND FishName = @FishName";
+                using var checkFishCmd = new MySqlCommand(checkFishQuery, db);
+                checkFishCmd.Parameters.AddWithValue("@UserId", userId);
+                checkFishCmd.Parameters.AddWithValue("@FishName", caughtChar.Name);
 
-                var existingCount = checkCmd.ExecuteScalar();
+                var existingCount = checkFishCmd.ExecuteScalar();
 
                 if (existingCount != null && existingCount != DBNull.Value)
                 {
                     totalCatchCount = Convert.ToInt64(existingCount) + 1;
                     string updateQuery = "UPDATE UserFishes SET CatchCount = @Count WHERE UserId = @UserId AND FishName = @FishName";
-                    using var updateCmd = new SqliteCommand(updateQuery, db);
+                    using var updateCmd = new MySqlCommand(updateQuery, db);
                     updateCmd.Parameters.AddWithValue("@Count", totalCatchCount);
                     updateCmd.Parameters.AddWithValue("@UserId", userId);
                     updateCmd.Parameters.AddWithValue("@FishName", caughtChar.Name);
@@ -953,18 +969,19 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
                 {
                     isNew = true;
                     string insertQuery = "INSERT INTO UserFishes (UserId, FishName, Grade, Length, CatchCount) VALUES (@UserId, @FishName, @Grade, 0, 1)";
-                    using var insertCmd = new SqliteCommand(insertQuery, db);
+                    using var insertCmd = new MySqlCommand(insertQuery, db);
                     insertCmd.Parameters.AddWithValue("@UserId", userId);
                     insertCmd.Parameters.AddWithValue("@FishName", caughtChar.Name);
                     insertCmd.Parameters.AddWithValue("@Grade", caughtChar.Grade);
                     insertCmd.ExecuteNonQuery();
                 }
 
-                string pointQuery = "UPDATE Users SET Points = Points + @Price WHERE UserId = @UserId";
-                using var pointCmd = new SqliteCommand(pointQuery, db);
-                pointCmd.Parameters.AddWithValue("@Price", caughtChar.Price);
-                pointCmd.Parameters.AddWithValue("@UserId", userId);
-                pointCmd.ExecuteNonQuery();
+                // 캐릭터 환급 지원금 추가
+                string refundQuery = "UPDATE Users SET Points = Points + @Price WHERE UserId = @UserId";
+                using var refundCmd = new MySqlCommand(refundQuery, db);
+                refundCmd.Parameters.AddWithValue("@Price", caughtChar.Price);
+                refundCmd.Parameters.AddWithValue("@UserId", userId);
+                refundCmd.ExecuteNonQuery();
             }
 
             Color embedColor = Color.Blue;
@@ -975,20 +992,43 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
                 .WithTitle("🎧 [보카로 캐릭터 스카우트 성공!]")
                 .WithDescription(isNew ? "✨ **[NEW 도감 등록!]** 새로운 캐릭터를 만났어요!" : $"🎶 또 만났네요! (총 {totalCatchCount}번째 영입)")
                 .AddField("캐릭터", $"**{caughtChar.Name}** ({caughtChar.Grade})", true)
-                .AddField("지원금 보상", $"+{caughtChar.Price:N0} P", true)
+                .AddField("지원금 환급", $"+{caughtChar.Price:N0} P (손실: -{baitPrice - caughtChar.Price:N0} P)", true)
                 .WithColor(embedColor)
                 .Build();
 
             await RespondAsync(embed: embed);
 
             _logger.LogInformation(
-                "{User}님이 낚시로 '{Character}' ({Grade})을(를) 획득했습니다. 신규={IsNew}, 누적={TotalCatchCount}",
+                "{User}님이 가챠로 '{Character}' ({Grade})을(를) 획득했습니다. 신규={IsNew}, 누적={TotalCatchCount}",
                 Context.User.Username, caughtChar.Name, caughtChar.Grade, isNew, totalCatchCount);
         }
         catch (Exception ex)
         {
-            // 💡 발생 상황: DatabaseService에서 UserFishes 테이블 생성을 안 해놨거나 DB 업데이트 도중 꼬였을 때!
-            await RespondErrorAsync("낚시", ex, "악어가 나타났다!!\n*DB SQL에 실패했습니다.*\n*점검:*\n- 관리자 DM");
+            await RespondErrorAsync("가챠", ex, "*DB SQL에 실패했습니다.*\n*점검:*\n- 관리자 DM");
+        }
+    }
+
+    [SlashCommand("가챠확률", "가챠를 뽑을 때의 확률은...?")]
+    public async Task GachaPercentAsync()
+    {
+        try
+        {
+            var embed = new EmbedBuilder()
+                .WithTitle("🎰 [토리의 캐릭터 가챠 확률 안내]")
+                .WithDescription("500포인트를 소모해 보컬로이드 캐릭터를 영입해보세요!\n각 등급별 등장 확률 및 환급 지원금 안내입니다.")
+                .WithColor(Color.Gold) // 골드 색상으로 강조
+                .AddField("⚪ 일반 등급 (80%)", "• **등장 확률**: `80%`\n• **환급 지원금**: `50 ~ 150 P`\n• **등장 캐릭터**: 즌다몬, 카이토, 유키, 카후, 우이, 유카, 린, 렌, 네루, 레이", false)
+                .AddField("🟣 희귀 등급 (18%)", "• **등장 확률**: `18%`\n• **환급 지원금**: `300 ~ 500 P`\n• **등장 캐릭터**: 테토(한국어), 미쿠(한국어), 테토(영어), 미쿠(영어)", false)
+                .AddField("🟡 전설 등급 (2%)", "• **등장 확률**: `2%` (대박! 🎉)\n• **환급 지원금**: `1,000 ~ 2,000 P`\n• **등장 캐릭터**: 테토(일본어), 미쿠(일본어), 작곡(전설의 마스터)", false)
+                .WithFooter("소모 포인트: 회당 500 P", Context.Client.CurrentUser.GetAvatarUrl())
+                .WithCurrentTimestamp()
+                .Build();
+
+            await RespondAsync(embed: embed);
+        }
+        catch (Exception ex)
+        {
+            await RespondErrorAsync("가챠확률", ex, "확률표를 가져오는 중에 메모리를 쏟았습니다!");
         }
     }
 
@@ -1013,12 +1053,12 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
 
     [SlashCommand("초대링크", "현재 채널의 서버 초대 링크를 생성합니다.")]
     public async Task CreateInviteLinkAsync(
-        [Summary(description: "링크 만료 시간 (분 단위, 0 = 무제한)")] int maxAgeMinutes = 1440, // 기본값: 24시간 (1440분)
+        [Summary(description: "링크 만료 시간 (분 단위, 0 = 무제한)")] int maxAgeMinutes = 1440,
         [Summary(description: "최대 사용 횟수 (0 = 무제한)")] int maxUses = 0)
     {
         try
         {
-            await DeferAsync(ephemeral: true); // 생성한 링크가 다른 사람에게 노출되지 않게 비공개 응답
+            await DeferAsync(ephemeral: true);
 
             if (Context.Channel is not ITextChannel channel)
             {
@@ -1026,11 +1066,9 @@ public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
                 return;
             }
 
-            // 분 단위를 초 단위로 변환 (0이면 null로 처리되어 무제한)
             int? maxAgeSeconds = maxAgeMinutes > 0 ? maxAgeMinutes * 60 : null;
             int? uses = maxUses > 0 ? maxUses : null;
 
-            // 디스코드 API로 초대 링크 생성
             var invite = await channel.CreateInviteAsync(
                 maxAge: maxAgeSeconds,
                 maxUses: uses,

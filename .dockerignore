@@ -1,0 +1,8 @@
+mysql_data/
+bin/
+obj/
+.git/
+.vs/
+.env
+appsettings.json
+appsettings.Development.json
