@@ -95,7 +95,7 @@ app.Run(BotEnv.isDev? $"http://localhost:{port}": $"http://0.0.0.0:{port}");
 
 public static class BotEnv
 {
-    public static bool isDev = true;
+    public static bool isDev = false;
     public static string botVersion = "1.3.0";
     
     public static void CheckEnv() {
