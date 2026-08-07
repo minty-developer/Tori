@@ -7,11 +7,13 @@ public class DatabaseService
 
     public DatabaseService(IConfiguration configuration)
     {
-        // 1. null을 체크하고, 없으면 명확한 에러를 발생시켜 앱이 비정상 동작하지 않게 합니다.
-        _connectionString = configuration.GetConnectionString("DefaultConnection") 
-                            ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+        // 1. GetConnectionString 탐색 -> 2. 일반 환경변수 탐색 -> 3. 없으면 예외 발생
+        _connectionString = configuration.GetConnectionString("DefaultConnection")
+                            ?? configuration["DB_CONNECTION_STRING"]
+                            ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
+                            ?? throw new InvalidOperationException("DB 연결 문자열('DefaultConnection')을 찾을 수 없습니다. appsettings.json 또는 환경 변수를 확인하세요.");
         
-        InitializeDatabase(); // 테이블 생성 로직도 여기서 호출하세요!
+        InitializeDatabase();
     }
 
     public MySqlConnection GetConnection()

@@ -276,7 +276,7 @@ public class AdminCommands : InteractionModuleBase<SocketInteractionContext>
 
             const string upsertQuery = @"
                 INSERT INTO Users (UserId, Points, LastCheckIn) 
-                VALUES (@UserId, @FinalPoints, 'None')
+                VALUES (@UserId, @FinalPoints, NULL)
                 ON DUPLICATE KEY UPDATE Points = @FinalPoints;";
 
             using var cmd = new MySqlCommand(upsertQuery, db);
