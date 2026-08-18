@@ -1,34 +1,22 @@
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using System.Reflection;
 
 // 봇의 기동/로그인, 슬래시 커맨드 등록, 기본 텍스트 명령어("!토리")를 담당하는 핵심 호스팅 서비스.
-public class DiscordBotService : IHostedService
-{
-    private readonly DiscordSocketClient _client;
-    private readonly InteractionService _interaction;
-    private readonly IConfiguration _config;
-    private readonly IServiceProvider _services;
-    private readonly ILogger<DiscordBotService> _logger;
-
-    public DiscordBotService(
+public class DiscordBotService(
         DiscordSocketClient client,
         InteractionService interaction,
         IConfiguration config,
         IServiceProvider services,
-        ILogger<DiscordBotService> logger,
-        TranslationService translationService) // 생성자에 주입만 해서 DI가 인스턴스를 계속 유지하게 한다 (번역 이벤트 구독 유지 목적)
-    {
-        _client = client;
-        _interaction = interaction;
-        _config = config;
-        _services = services;
-        _logger = logger;
-    }
+        ILogger<DiscordBotService> logger) : IHostedService
+{
+    // 생성자에 주입만 해서 DI가 인스턴스를 계속 유지하게 한다 (번역 이벤트 구독 유지 목적)
+    private readonly DiscordSocketClient _client = client;
+    private readonly InteractionService _interaction = interaction;
+    private readonly IConfiguration _config = config;
+    private readonly IServiceProvider _services = services;
+    private readonly ILogger<DiscordBotService> _logger = logger;
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {

@@ -2,26 +2,16 @@ using Discord.Interactions;
 using Discord.WebSocket;
 using Discord;
 using MySqlConnector;
-using Microsoft.Extensions.Logging;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using model;
 
 // 일반 유저용 명령어 모음 (인사, 출석체크, 포인트, 상점, 도박, 퀴즈, 낚시 등)
-public class SlashCommands : InteractionModuleBase<SocketInteractionContext>
+public class SlashCommands(DatabaseService dbService, ILogger<SlashCommands> logger, InteractionService interactionService) : InteractionModuleBase<SocketInteractionContext>
 {
-    private readonly DatabaseService _dbService;
-    private readonly ILogger<SlashCommands> _logger;
-    private readonly InteractionService _interactionService;
+    private readonly DatabaseService _dbService = dbService;
+    private readonly ILogger<SlashCommands> _logger = logger;
+    private readonly InteractionService _interactionService = interactionService;
 
-    public SlashCommands(DatabaseService dbService, ILogger<SlashCommands> logger, InteractionService interactionService)
-    {
-        _dbService = dbService;
-        _logger = logger;
-        _interactionService = interactionService;
-    }
-
-    // 낚시로 등장 가능한 캐릭터 후보 목록.
     // 낚시로 등장 가능한 캐릭터 후보 목록 (밸런스 패치 적용)
     private static readonly List<(string Name, string Grade, long Price)> FishingCharacterPool = new()
     {

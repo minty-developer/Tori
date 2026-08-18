@@ -1,13 +1,16 @@
-using System.Text.Json;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Discord;
+using Discord.WebSocket;
 using Microsoft.AspNetCore.Mvc;
+using model;
 
 namespace Bot.Api.Controllers;
 
 [ApiController]
 [Route("/api/v1")]
-public class ApiController : ControllerBase
+public class ApiController(DiscordSocketClient client) : ControllerBase
 {
+    private readonly DiscordSocketClient _client = client;
+
     [HttpGet]
     public IActionResult GetOpenApi()
     {
@@ -28,4 +31,46 @@ public class ApiController : ControllerBase
 
     [HttpGet("/health")]
     public IActionResult GetCheckHealth() => Ok();
+
+    [HttpPost("/announcement")]
+    public async Task<IActionResult> SendAnnouncement(
+        [FromBody] AnnouncementRequest request)
+    {
+        Console.WriteLine(
+            $"공지 수신: {request.Version} / {request.Title}"
+        );
+
+        // 여기에 공지를 보낼 Discord 채널 ID
+        ulong channelId = 1529006865260740729;
+
+        var channel = _client.GetChannel(channelId);
+
+        if (channel is not IMessageChannel messageChannel)
+        {
+            return NotFound(new
+            {
+                success = false,
+                message = "Discord 채널을 찾을 수 없습니다."
+            });
+        }
+
+        var embed = new EmbedBuilder()
+            .WithTitle(request.Title)
+            .WithDescription(request.Changes)
+            .AddField("버전", request.Version, true)
+            .AddField("업데이트 날짜", request.Date, true)
+            .WithColor(Color.Blue)
+            .WithCurrentTimestamp()
+            .Build();
+
+        await messageChannel.SendMessageAsync(
+            embed: embed
+        );
+
+        return Ok(new
+        {
+            success = true,
+            message = "Discord 공지를 전송했습니다."
+        });
+    }
 }

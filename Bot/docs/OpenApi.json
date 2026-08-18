@@ -48,6 +48,16 @@
           }
         }
       }
+    },
+    "/announcement": {
+      "post": {
+        "summary": "서버에 공지 메시지 보내기",
+        "responses": {
+          "200": {
+            "description": "공지 성공"
+          }
+        }
+      }
     }
   },
   "components": {
