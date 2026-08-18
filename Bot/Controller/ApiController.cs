@@ -43,7 +43,7 @@ public class ApiController(DiscordSocketClient client) : ControllerBase
         // 여기에 공지를 보낼 Discord 채널 ID
         ulong channelId = 1529006865260740729;
 
-        var channel = _client.GetChannel(channelId);
+        var channel = await _client.GetChannelAsync(channelId);
 
         if (channel is not IMessageChannel messageChannel)
         {
