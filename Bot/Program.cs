@@ -68,6 +68,10 @@ app.Use(async (context, next) =>
 
         var validApiKey = Environment.GetEnvironmentVariable("TORI_API_KEY");
 
+        Console.WriteLine(
+            $"TORI_API_KEY loaded: {!string.IsNullOrEmpty(validApiKey)}, length: {validApiKey?.Length ?? 0}"
+        );
+
         // 3. 키 일치 여부 검증
         if (string.IsNullOrEmpty(validApiKey) || !validApiKey.Equals(extractedApiKey))
         {
