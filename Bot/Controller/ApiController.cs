@@ -26,13 +26,13 @@ public class ApiController(DiscordSocketClient client) : ControllerBase
         return Content(jsonString, "application/json");
     }
 
-    [HttpGet("/version")]
+    [HttpGet("version")]
     public IActionResult GetCheckVersion() => Ok(new { version = BotEnv.botVersion });
 
-    [HttpGet("/health")]
+    [HttpGet("health")]
     public IActionResult GetCheckHealth() => Ok();
 
-    [HttpPost("/announcement")]
+    [HttpPost("announcement")]
     public async Task<IActionResult> SendAnnouncement(
         [FromBody] AnnouncementRequest request)
     {

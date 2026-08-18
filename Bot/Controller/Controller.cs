@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace MyBot.Api.Controllers;
+namespace Bot.Api.Controllers;
 
 [ApiController]
 [Route("/")]
