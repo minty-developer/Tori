@@ -247,7 +247,6 @@ public class AdminCommands : InteractionModuleBase<SocketInteractionContext>
 
             long userId = (long)targetUser.Id;
             long currentPoints = 0;
-            bool isNewUser = false;
 
             using var db = _dbService.GetConnection();
             db.Open();
@@ -259,9 +258,7 @@ public class AdminCommands : InteractionModuleBase<SocketInteractionContext>
                 selectCmd.Parameters.AddWithValue("@UserId", userId);
 
                 var result = selectCmd.ExecuteScalar();
-                if (result == null || result == DBNull.Value)
-                    isNewUser = true;
-                else
+                if (result is not null && result != DBNull.Value)
                     currentPoints = Convert.ToInt64(result);
             }
 
