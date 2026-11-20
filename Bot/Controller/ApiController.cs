@@ -1,7 +1,6 @@
 using Discord;
 using Discord.WebSocket;
 using Microsoft.AspNetCore.Mvc;
-using model;
 
 namespace Bot.Api.Controllers;
 

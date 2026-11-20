@@ -5,9 +5,9 @@ public class EasterEggCommands(ILogger<EasterEggCommands> logger, Util util) : I
     // 유저 행동에 대한 테토의 반응
     public Dictionary<string, string[]> ActionofMove = new() {
         { "인사", ["안녕~!", "안녕~! 잘 지냈어?", "여기, 여기! 토리 여기 있어!"] },
-        { "쓰다듬기", ["아..앗 뭐하는 거야! 머리 헝클어지잖아..."] },
-        { "바라보기", ["뭐....뭘 바라 봐! 내가 그렇게 이뻐?"] },
-        { "빨간미쿠", ["빨간 미쿠 **아니거든~!?**"] }
+        { "쓰다듬기", ["아..앗 뭐하는 거야! 머리 헝클어지잖아...", "..... 1분만이야!"] },
+        { "바라보기", ["뭐....뭘 바라 봐! 내가 그렇게 이뻐?", ".... 왜? 뭐.... 뭐 줄 거 있어..?"] },
+        { "빨간미쿠", ["빨간 미쿠 **아니거든~!?**", "흥! 빨간 미쿠 아니라구~!", "하지 마!"] }
     };
 
     private readonly ILogger<EasterEggCommands> _logger = logger;

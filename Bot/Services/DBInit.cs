@@ -28,8 +28,13 @@ public partial class DatabaseService
 
             CREATE TABLE IF NOT EXISTS Titles (
                 TitleId INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+                Code VARCHAR(50) NOT NULL UNIQUE,
                 Name VARCHAR(50) NOT NULL UNIQUE,
                 Description VARCHAR(255),
+
+                Price INT NOT NULL DEFAULT 0,
+
                 ConditionType VARCHAR(50),
                 ConditionValue INT
             );
@@ -37,6 +42,7 @@ public partial class DatabaseService
             CREATE TABLE IF NOT EXISTS UserTitles (
                 UserId BIGINT UNSIGNED NOT NULL,
                 TitleId INT UNSIGNED NOT NULL,
+
                 AcquiredAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 IsEquipped BOOLEAN NOT NULL DEFAULT FALSE,
 

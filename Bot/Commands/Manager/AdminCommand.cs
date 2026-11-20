@@ -2,8 +2,6 @@ using Discord.Interactions;
 using Discord.WebSocket;
 using Discord;
 using MySqlConnector;
-using Microsoft.Extensions.Logging;
-using model;
 
 // 1. 팝업 창(Modal) UI 클래스
 // '공지' 명령어를 실행하면 유저에게 이 클래스에 정의된 입력 폼이 뜬다.

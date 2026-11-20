@@ -1,7 +1,6 @@
 using Discord;
 using Discord.WebSocket;
 using Discord.Interactions;
-using System.Reflection.Metadata.Ecma335;
 using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
@@ -46,6 +45,11 @@ builder.Services.AddControllers();
 builder.Services.AddSingleton<TranslationService>();
 
 builder.Services.AddSingleton<Util>();
+
+// Repository 싱글톤 추가
+builder.Services.AddSingleton<UserRepository>();
+builder.Services.AddSingleton<InformationRepository>();
+builder.Services.AddSingleton<TitleRepository>();
 
 // 봇 로그인/슬래시 커맨드 등록/기본 이벤트 처리를 담당하는 메인 호스팅 서비스
 builder.Services.AddHostedService<DiscordBotService>();

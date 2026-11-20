@@ -1,8 +1,5 @@
 using Discord.WebSocket;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using System.Text.Json;
-using model;
 
 // 매일 한국시간(KST) 오전 9시에 그날이 생일인 캐릭터가 있는지 확인해서
 // 지정된 채널에 축하 메시지를 보내는 백그라운드 서비스.

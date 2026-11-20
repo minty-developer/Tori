@@ -1,47 +1,47 @@
 using System.Text.Json;
 using Discord.Interactions;
 
-public class InformationCommands(DatabaseService dbService, ILogger<InformationCommands> logger, Util util) : InteractionModuleBase<SocketInteractionContext>
+public class InformationCommands(InformationRepository informationRepository, ILogger<InformationCommands> logger, Util util) : InteractionModuleBase<SocketInteractionContext>
 {
     private readonly ILogger<InformationCommands> _logger = logger;
-    private readonly DatabaseService _dbService = dbService;
     private readonly Util _util = util;
+    private readonly InformationRepository _repo = informationRepository;
 
     [SlashCommand("타임라인", "지금까지 우리 서버는...")]
     public async Task ShowServerTimelineAsync()
     {
-        return;
-        // try
-        // {
-        //     string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Datas", "timeline.json");
+        try
+        {
+            var timeline = await _repo.GetTimelineAsync();
 
-        //     if (!File.Exists(filePath))
-        //     {
-        //         await RespondAsync("아직 서버 타임라인 기록(timeline.json)이 비어 있어!", ephemeral: true);
-        //         return;
-        //     }
+            if (timeline.Count == 0)
+            {
+                await RespondAsync("아직 역사가 없어! 새출발!");
+                return;
+            }
 
-        //     string jsonString = await File.ReadAllTextAsync(filePath);
-        //     var timeline = JsonSerializer.Deserialize<List<TimelineItem>>(jsonString);
+            var timelineListText = string.Join(
+                "\n\n",
+                timeline.Select(item =>
+                    $"📅 **{item.OccurredAt:yyyy-MM-dd}** - {item.EventType}\n" +
+                    $"> {item.Description}"));
 
-        //     if (timeline == null || timeline.Count == 0)
-        //     {
-        //         await RespondAsync("아직 역사가 없어! 새출발!");
-        //         return;
-        //     }
+            string message =
+                $"📜 **[토리의 서버 역사관]** 우리 서버가 걸어온 길이야!\n\n" +
+                timelineListText;
 
-        //     var timelineListText = string.Join("\n\n", timeline.Select(item => $"📅 **{item.Date}** - {item.Title}\n> {item.Description}"));
-
-        //     string message =
-        //         $"📜 **[토리의 서버 역사관]** 우리 서버가 걸어온 길이야!\n\n" +
-        //         $"{timelineListText}";
-
-        //     await RespondAsync(message);
-        // }
-        // catch (Exception ex)
-        // {
-        //     await _util.RespondErrorAsync("타임라인", ex, "역사관 보물들이 서로 섞여버렸습니다!\n*타임라인을 저장하는 JSON 파싱에 실패했습니다.*\n*점검:*\n- 관리자 DM");
-        // }
+            await RespondAsync(message);
+        }
+        catch (Exception ex)
+        {
+            await _util.RespondErrorAsync(
+                "타임라인",
+                ex,
+                "역사관 보물들이 서로 섞여버렸습니다!\n" +
+                "*DB에서 타임라인을 불러오다가 실패했습니다.*\n" +
+                "*점검:*\n- 관리자 DM",
+                _logger);
+        }
     }
 
     [SlashCommand("웹사이트", "토리의 웹사이트")]
@@ -68,7 +68,7 @@ public class InformationCommands(DatabaseService dbService, ILogger<InformationC
         }
     }
 
-    [SlashCommand("버전", "테토는 얼마나 성장했어?")]
+    [SlashCommand("버전", "토리는 얼마나 성장했어?")]
     public async Task ShowVersionAsync()
     {
         try
