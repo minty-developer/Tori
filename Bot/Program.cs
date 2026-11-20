@@ -39,6 +39,8 @@ builder.Services.AddSingleton<Util>();
 builder.Services.AddSingleton<UserRepository>();
 builder.Services.AddSingleton<InformationRepository>();
 builder.Services.AddSingleton<TitleRepository>();
+builder.Services.AddSingleton<MoneyRepository>();
+builder.Services.AddSingleton<VoteRepository>();
 
 // 일본어 메시지 자동 번역 서비스. DiscordBotService 생성자에서 함께 주입받아
 // DI 컨테이너가 이 인스턴스를 계속 살려두도록(=이벤트 구독이 유지되도록) 한다.
@@ -46,6 +48,9 @@ builder.Services.AddSingleton<TranslationService>();
 
 // 매일 오전 9시 KST에 생일 알림을 전송하는 백그라운드 서비스
 builder.Services.AddHostedService<BirthdayBackgroundService>();
+
+// 디스코드 투표 임베드 관리 서비스
+builder.Services.AddSingleton<PollMessageService>();
 
 builder.Services.AddSingleton(provider =>
     new InteractionService(provider.GetRequiredService<DiscordSocketClient>())

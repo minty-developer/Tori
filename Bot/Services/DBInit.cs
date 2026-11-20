@@ -116,6 +116,70 @@ public partial class DatabaseService
                     CHECK (Day BETWEEN 1 AND 31),
 
                 INDEX IDX_Birthdays_Date (Month, Day)
+            );
+
+            CREATE TABLE IF NOT EXISTS Polls (
+                PollId BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+                Title VARCHAR(256) NOT NULL,
+                CreatorId BIGINT UNSIGNED NOT NULL,
+
+                ChannelId BIGINT UNSIGNED NULL,
+                MessageId BIGINT UNSIGNED NULL,
+
+                Status VARCHAR(20) NOT NULL DEFAULT 'Draft',
+
+                CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                StartedAt DATETIME NULL,
+                EndedAt DATETIME NULL,
+
+                IsAnonymous BOOLEAN NOT NULL DEFAULT TRUE,
+                AllowRevote BOOLEAN NOT NULL DEFAULT FALSE,
+
+                CONSTRAINT CHK_Polls_Status
+                    CHECK (Status IN ('Draft', 'Active', 'Paused', 'Ended'))
+            );
+
+            CREATE TABLE IF NOT EXISTS PollOptions (
+                OptionId BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+                PollId BIGINT UNSIGNED NOT NULL,
+                OptionText VARCHAR(100) NOT NULL,
+                Position TINYINT UNSIGNED NOT NULL,
+
+                CONSTRAINT FK_PollOptions_Polls
+                    FOREIGN KEY (PollId)
+                    REFERENCES Polls(PollId)
+                    ON DELETE CASCADE,
+
+                CONSTRAINT UQ_PollOptions_Position
+                    UNIQUE (PollId, Position),
+
+                CONSTRAINT UQ_PollOptions_Id_Poll
+                    UNIQUE (PollId, OptionId)
+            );
+
+            CREATE TABLE IF NOT EXISTS PollVotes (
+                VoteId BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+                PollId BIGINT UNSIGNED NOT NULL,
+                OptionId BIGINT UNSIGNED NOT NULL,
+                UserId BIGINT UNSIGNED NOT NULL,
+
+                VotedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+                CONSTRAINT FK_PollVotes_Polls
+                    FOREIGN KEY (PollId)
+                    REFERENCES Polls(PollId)
+                    ON DELETE CASCADE,
+
+                CONSTRAINT FK_PollVotes_Options
+                    FOREIGN KEY (PollId, OptionId)
+                    REFERENCES PollOptions(PollId, OptionId)
+                    ON DELETE CASCADE,
+
+                CONSTRAINT UQ_PollVotes_User
+                    UNIQUE (PollId, UserId)
             );";
 
     public DatabaseService()

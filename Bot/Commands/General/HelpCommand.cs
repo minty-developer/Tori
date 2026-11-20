@@ -11,7 +11,7 @@ public class HelpCommands(
     private readonly InteractionService _interactionService = interactionService;
     private readonly Util _util = util;
 
-    [SlashCommand("명령어", "토리가 할 수 있는 일은~!")]
+    [SlashCommand("도움", "토리가 할 수 있는 일은~!")]
     public async Task ListCommandsAsync()
     {
         var slashCommands = _interactionService.SlashCommands;
