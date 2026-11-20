@@ -8,3 +8,4 @@ appsettings.Development.json
 .env
 mysql_data/
 Data/
+Dump/
