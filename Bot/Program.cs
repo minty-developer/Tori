@@ -45,6 +45,8 @@ builder.Services.AddControllers();
 // DI 컨테이너가 이 인스턴스를 계속 살려두도록(=이벤트 구독이 유지되도록) 한다.
 builder.Services.AddSingleton<TranslationService>();
 
+builder.Services.AddSingleton<Util>();
+
 // 봇 로그인/슬래시 커맨드 등록/기본 이벤트 처리를 담당하는 메인 호스팅 서비스
 builder.Services.AddHostedService<DiscordBotService>();
 
@@ -100,7 +102,7 @@ app.Run(BotEnv.isDev? $"http://localhost:{port}": $"http://0.0.0.0:{port}");
 public static class BotEnv
 {
     public static bool isDev = true;
-    public static string botVersion = "1.3.8";
+    public static string botVersion = "2.0.0";
     
     public static void CheckEnv() {
         if(isDev) Env.Load();

@@ -1,7 +1,6 @@
 using MySqlConnector;
-using Microsoft.Extensions.Configuration;
 
-public class DatabaseService
+public partial class DatabaseService
 {
     private readonly string _connectionString;
 
@@ -88,22 +87,29 @@ public class DatabaseService
                     REFERENCES Users(UserId)
                     ON DELETE CASCADE
             );
-            
-            CREATE TABLE IF NOT EXISTS Birthdays (
-                UserId BIGINT UNSIGNED PRIMARY KEY,
+
+            CREATE TABLE IF NOT EXISTS Birthdays
+            (
+                BirthdayId INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+                Name VARCHAR(100) NOT NULL,
+                Category VARCHAR(30) NOT NULL,
+
                 Month TINYINT UNSIGNED NOT NULL,
                 Day TINYINT UNSIGNED NOT NULL,
+
                 IsEnabled BOOLEAN NOT NULL DEFAULT TRUE,
 
-                FOREIGN KEY (UserId)
-                    REFERENCES Users(UserId)
-                    ON DELETE CASCADE,
+                CONSTRAINT CHK_Birthdays_Category
+                    CHECK (Category IN ('Character', 'Engine')),
 
-                CONSTRAINT CK_Birthdays_Month
+                CONSTRAINT CHK_Birthdays_Month
                     CHECK (Month BETWEEN 1 AND 12),
 
-                CONSTRAINT CK_Birthdays_Day
-                    CHECK (Day BETWEEN 1 AND 31)
+                CONSTRAINT CHK_Birthdays_Day
+                    CHECK (Day BETWEEN 1 AND 31),
+
+                INDEX IDX_Birthdays_Date (Month, Day)
             );";
 
     public DatabaseService()
