@@ -1,14 +1,16 @@
 using Discord;
 using Discord.WebSocket;
 using Discord.Interactions;
-using DotNetEnv;
 
+// 앱 빌드
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
     Args = args
 });
 
+// 환경 변수 로드
 BotEnv.CheckEnv();
+
 // builder.Configuration.Sources.Clear();
 builder.Configuration
     .SetBasePath(AppContext.BaseDirectory)
@@ -18,15 +20,29 @@ builder.Configuration
 // Discord.Net 소켓 클라이언트 설정 (게이트웨이 인텐트: 비특권 전체 + 메시지 본문 읽기 권한)
 builder.Services.AddSingleton(x => new DiscordSocketConfig
 {
-    GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent
+    GatewayIntents =
+        GatewayIntents.Guilds |
+        GatewayIntents.GuildMessages |
+        GatewayIntents.MessageContent
 });
-
 builder.Services.AddSingleton(provider =>
     new DiscordSocketClient(provider.GetRequiredService<DiscordSocketConfig>())
 );
 
-// SQLite 커넥션/스키마 관리 서비스 (Users, UserFishes 테이블)
+// SQLite 커넥션/스키마 관리 서비스
 builder.Services.AddSingleton<DatabaseService>();
+
+// Util Halper 싱글톤
+builder.Services.AddSingleton<Util>();
+
+// Repository 싱글톤 등록
+builder.Services.AddSingleton<UserRepository>();
+builder.Services.AddSingleton<InformationRepository>();
+builder.Services.AddSingleton<TitleRepository>();
+
+// 일본어 메시지 자동 번역 서비스. DiscordBotService 생성자에서 함께 주입받아
+// DI 컨테이너가 이 인스턴스를 계속 살려두도록(=이벤트 구독이 유지되도록) 한다.
+builder.Services.AddSingleton<TranslationService>();
 
 // 매일 오전 9시 KST에 생일 알림을 전송하는 백그라운드 서비스
 builder.Services.AddHostedService<BirthdayBackgroundService>();
@@ -40,56 +56,13 @@ builder.Services.AddMemoryCache();
 // 컨트롤러 등록
 builder.Services.AddControllers();
 
-// 일본어 메시지 자동 번역 서비스. DiscordBotService 생성자에서 함께 주입받아
-// DI 컨테이너가 이 인스턴스를 계속 살려두도록(=이벤트 구독이 유지되도록) 한다.
-builder.Services.AddSingleton<TranslationService>();
-
-builder.Services.AddSingleton<Util>();
-
-// Repository 싱글톤 추가
-builder.Services.AddSingleton<UserRepository>();
-builder.Services.AddSingleton<InformationRepository>();
-builder.Services.AddSingleton<TitleRepository>();
-
 // 봇 로그인/슬래시 커맨드 등록/기본 이벤트 처리를 담당하는 메인 호스팅 서비스
 builder.Services.AddHostedService<DiscordBotService>();
 
 var app = builder.Build();
 
 app.UseRateLimiterMiddleware();
-
-// API Key 검증 미들웨어
-app.Use(async (context, next) =>
-{
-    // /api 로 시작하는 요청에 대해서만 API 키 검증
-    if (context.Request.Path.StartsWithSegments("/api"))
-    {
-        // 1. Header에서 x-api-key 추출
-        if (!context.Request.Headers.TryGetValue("x-api-key", out var extractedApiKey))
-        {
-            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            await context.Response.WriteAsJsonAsync(new { success = false, message = "API 키가 누락되었습니다." });
-            return;
-        }
-
-        var validApiKey = Environment.GetEnvironmentVariable("TORI_API_KEY");
-
-        Console.WriteLine(
-            $"TORI_API_KEY loaded: {!string.IsNullOrEmpty(validApiKey)}, length: {validApiKey?.Length ?? 0}"
-        );
-
-        // 3. 키 일치 여부 검증
-        if (string.IsNullOrEmpty(validApiKey) || !validApiKey.Equals(extractedApiKey))
-        {
-            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            await context.Response.WriteAsJsonAsync(new { success = false, message = "유효하지 않은 API 키입니다." });
-            return;
-        }
-    }
-
-    // 검증 성공 시 다음 라우트/컨트롤러로 진행
-    await next();
-});
+app.UseAPIKeyMiddleware();
 
 app.MapControllers();
 
@@ -102,13 +75,3 @@ app.MapGet("/favicon.ico", () => Results.StatusCode(204));
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 
 app.Run(BotEnv.isDev? $"http://localhost:{port}": $"http://0.0.0.0:{port}");
-
-public static class BotEnv
-{
-    public static bool isDev = true;
-    public static string botVersion = "2.0.0";
-    
-    public static void CheckEnv() {
-        if(isDev) Env.Load();
-    }
-}

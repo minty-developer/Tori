@@ -1,20 +1,13 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 
-public class RateLimitMiddleware
+public class RateLimitMiddleware(RequestDelegate next, IMemoryCache cache)
 {
-    private readonly RequestDelegate _next;
-    private readonly IMemoryCache _cache;
+    private readonly RequestDelegate _next = next;
+    private readonly IMemoryCache _cache = cache;
     
     // 설정 값: 10초 동안 최대 10번 요청 허용
     private readonly int _maxRequests = 10;
     private readonly TimeSpan _timeWindow = TimeSpan.FromSeconds(10);
-
-    public RateLimitMiddleware(RequestDelegate next, IMemoryCache cache)
-    {
-        _next = next;
-        _cache = cache;
-    }
 
     public async Task InvokeAsync(HttpContext context)
     {
