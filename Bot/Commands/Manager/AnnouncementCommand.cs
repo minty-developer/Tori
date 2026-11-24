@@ -17,10 +17,7 @@ public class AnnounceCommands(
         {
             _logger.LogInformation("{User}님이 '공지' 명령어로 공지-봇 채널에 공지 모달을 요청했습니다.", Context.User.Username);
 
-            long channelId = BotEnv.isDev ? 1479322191148613686 : 1529006865260740729;
-            
-            // AnnounceModal을 직접 넘기는 대신 RespondWithModalAsync 내장 래퍼 형식에 맞춰 호출
-            await Context.Interaction.RespondWithModalAsync<AnnounceModal>($"announce_modal_{channelId}");
+            await Context.Interaction.RespondWithModalAsync<AnnounceModal>("announce_modal");
         }
         catch (Exception ex)
         {
@@ -29,21 +26,16 @@ public class AnnounceCommands(
     }
 
     // 유저가 모달에서 '제출'을 누르면 실행되는 메서드
-    [ModalInteraction("announce_modal_*")]
-    public async Task HandleAnnounceModal(string channelIdStr, AnnounceModal modal)
+    // This handler lives under the "공지" group, but the modal custom ID is
+    // intentionally top-level and must not inherit that group prefix.
+    [ModalInteraction("announce_modal", ignoreGroupNames: true)]
+    public async Task HandleAnnounceModal(AnnounceModal modal)
     {
         try
         {
             await DeferAsync(ephemeral: true);
 
-            string customId = (Context.Interaction as SocketModal)?.Data.CustomId ?? "";
-
-            if (!ulong.TryParse(channelIdStr, out ulong channelId))
-            {
-                await FollowupAsync("채널 정보를 찾지 못했어!", ephemeral: true);
-                return;
-            }
-
+            ulong channelId = 1529006865260740729UL;
             var channel = Context.Guild?.GetTextChannel(channelId);
             if (channel == null)
             {
@@ -63,7 +55,7 @@ public class AnnounceCommands(
     안녕하세요, **보카로** 관리진입니다!
     서버원 분들이 즐겁고 쾌적하게 즐길 수 있도록 몇 가지 안내를 전달드립니다.
 
-    ### 📢 [공지 제목: {modal.TitleInput}]
+    ### 📢 {modal.TitleInput}
 
     **1. 주요 내용**
     {mainContent}
